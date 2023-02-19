@@ -8,61 +8,66 @@ namespace Tick_Tack_Toe
 {
 	internal class Program
 	{
+		static (int, int) input(int width, int height)
+		{
+			Console.WriteLine("Please enter two numbers separated with a comma.");
+			for(;;) { 
+				string input = Console.ReadLine();
+				string[] words = input.Split(',', '.');
+				if (words.Length >= 2) // Check if input contains at least two words
+				{
+					int row = Int32.Parse(words[0]) - 1;
+					int col = Int32.Parse(words[1]) - 1;
+
+					if (0 <= row && row < height && 0 <= col && col < width)
+					{
+						return (row, col);
+					}
+
+				}
+				Console.WriteLine("Invalid input");
+			}
+		}
+
+
 		static void PlacePiece(int Player, int[,] board)
 		{
-			Console.WriteLine("Please enter two numbers sepereted with a comma.");
-			string input = Console.ReadLine();
-			string[] words = input.Split(',','.');
-			if (words.Length >= 2) // Check if input contains at least two words
+			for (; ; )
 			{
-				int row = Int32.Parse(words[0]) - 1;
-				int col = Int32.Parse(words[1]) - 1;
+				(int, int) place = input(3, 3);
+				int row = place.Item1;
+				int col = place.Item2;
+
 				if (board[row, col] == 0)
 				{
 					Console.WriteLine($"Row:{row + 1} Col:{col + 1}");
-					if (Player == 0)
-					{
-						board[row, col] = 1;
-
-					}
-					else if (Player == 1)
-					{
-						board[row, col] = 2;
-					}
+					board[row, col] = Player + 1;
+					return;
 				}
 				else
 				{
-					Console.WriteLine("Place allredy taken");
-					PlacePiece(Player, board);
+					Console.WriteLine("Place already taken");
 				}
 			}
-			else
-			{
-				Console.WriteLine("Invalid input");
-				PlacePiece(Player, board);
-			}
 		}
+
 		static void Main(string[] args)
 		{
 			int[,] board = new int[3, 3]; // Define and initialize board array
 			//char x = 'B';
 			//Console.WriteLine((int)x);
-			int Player = 0;
-			for (int i = 0; i != i+1; i++) // inf loop
+			for (int i = 0; ; i++) // inf loop
 			{
+				int Player = i % 2;
 				PlacePiece(Player, board);
-				Player++;
-				if (Player >= 2)
-				{
-					Player = 0;
-				}
 				Console.WriteLine(Player);
-				Console.WriteLine($"|{board[0, 0]}|{board[0, 1]}|{board[0, 2]}|");
+				//Console.WriteLine("  A B C ");
+				Console.WriteLine($"|{board[0, 0]}|{board[0, 1]}|{board[0, 2]}|"); // can write 1-3 infront of the console.writeline to make it more readable
 				Console.WriteLine($"|{board[1, 0]}|{board[1, 1]}|{board[1, 2]}|");
 				Console.WriteLine($"|{board[2, 0]}|{board[2, 1]}|{board[2, 2]}|");
 			}
-			Console.WriteLine("Achivment get: How did we get here?");
+			Console.WriteLine("Achievement get: How did we get here?");
 			Console.ReadKey();
-		}
+		}	
 	}
 }
