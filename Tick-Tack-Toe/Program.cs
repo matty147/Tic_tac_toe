@@ -30,7 +30,78 @@ namespace Tick_Tack_Toe
 	*/
 	internal class Program
 	{
-		static void Table(int[,] board, int row, int col)
+		static int d = 3;
+
+		static bool CheckIfPlayerWonRow(int[,] board, int height, int width, int Player, int row, int col)
+		{
+			if (col + d > width) return false;
+
+			for (int i = 0; i < d; i++)
+			{
+				if (board[row, col + i] != Player + 1) return false;
+			}
+
+			return true;
+		}
+
+		static bool CheckIfPlayerWonCol(int[,] board, int height, int width, int Player, int row, int col)
+		{
+			if (row + d > height) return false;
+
+			for (int i = 0; i < d; i++)
+			{
+				if (board[row + i, col] != Player + 1) return false;
+			}
+
+			return true;
+		}
+
+		static bool CheckIfPlayerWonDiagUp(int[,] board, int height, int width, int Player, int row, int col)
+		{
+			if (row - d < 0) return false;
+			if (col + d > width) return false;
+
+			for (int i = 0; i < d; i++)
+			{
+				if (board[row - i, col + i] != Player + 1) return false;
+			}
+
+			return true;
+		}
+
+		static bool CheckIfPlayerWonDiagDown(int[,] board, int height, int width, int Player, int row, int col)
+		{
+			if (row + d > height) return false;
+			if (col + d > width) return false;
+
+			for (int i = 0; i < d; i++)
+			{
+				if (board[row + i, col + i] != Player + 1) return false;
+			}
+
+			return true;
+		}
+
+		static bool CheckIfPlayerWon(int[,] board, int height, int width,int Player)
+		{
+			for (int row=0; row < height; row++)
+			{
+				for (int col = 0; col < width; col++)
+				{
+					if (
+						CheckIfPlayerWonRow(board, height, width, Player, row, col) ||
+						CheckIfPlayerWonCol(board, height, width, Player, row, col) ||
+						CheckIfPlayerWonDiagUp(board, height, width, Player, row, col) ||
+						CheckIfPlayerWonDiagDown(board, height, width, Player, row, col)
+					)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+	static void Table(int[,] board, int row, int col)
 		{
 			int i = 0;
 			foreach (int a in board)
@@ -96,6 +167,10 @@ namespace Tick_Tack_Toe
 			Console.WriteLine("Please enter two number for the size of the table");
 			string input = Console.ReadLine();
 			string[] words = input.Split(',', '.');
+			//check if a number is a decimal
+			//if (!Decimal.TryParse(words[0], out <output>))
+			//number will alwayes be positive
+			//Math.Abs();
 			row = Int32.Parse(words[0]);
 			col = Int32.Parse(words[1]);
 			int[,] board = new int[row, col]; // Define and initialize board array
@@ -106,13 +181,18 @@ namespace Tick_Tack_Toe
 				int Player = i % 2;
 				PlacePiece(row, col, Player, board);
 				Console.WriteLine(Player);
-				//Console.WriteLine("  A B C ");
 				Table(board, row, col);
 				/*
+				//Console.WriteLine("  A B C ");
 				Console.WriteLine($"|{board[0, 0]}|{board[0, 1]}|{board[0, 2]}|"); // can write 1-3 infront of the console.writeline to make it more readable
 				Console.WriteLine($"|{board[1, 0]}|{board[1, 1]}|{board[1, 2]}|");
 				Console.WriteLine($"|{board[2, 0]}|{board[2, 1]}|{board[2, 2]}|");
 				*/
+				if (CheckIfPlayerWon(board,row,col,Player))
+				{
+					Console.WriteLine($"Player {Player+1} Won");
+					//break;
+				}
 			}
 			Console.WriteLine("Achievement get: How did we get here?");
 			Console.ReadKey();
