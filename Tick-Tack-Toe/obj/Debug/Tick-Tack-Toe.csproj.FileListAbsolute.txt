@@ -1,8 +1,0 @@
-C:\Users\matty\source\repos\Tick-Tack-Toe\Tick-Tack-Toe\bin\Debug\Tick-Tack-Toe.exe.config
-C:\Users\matty\source\repos\Tick-Tack-Toe\Tick-Tack-Toe\bin\Debug\Tick-Tack-Toe.exe
-C:\Users\matty\source\repos\Tick-Tack-Toe\Tick-Tack-Toe\bin\Debug\Tick-Tack-Toe.pdb
-C:\Users\matty\source\repos\Tick-Tack-Toe\Tick-Tack-Toe\obj\Debug\Tick-Tack-Toe.csproj.AssemblyReference.cache
-C:\Users\matty\source\repos\Tick-Tack-Toe\Tick-Tack-Toe\obj\Debug\Tick-Tack-Toe.csproj.SuggestedBindingRedirects.cache
-C:\Users\matty\source\repos\Tick-Tack-Toe\Tick-Tack-Toe\obj\Debug\Tick-Tack-Toe.csproj.CoreCompileInputs.cache
-C:\Users\matty\source\repos\Tick-Tack-Toe\Tick-Tack-Toe\obj\Debug\Tick-Tack-Toe.exe
-C:\Users\matty\source\repos\Tick-Tack-Toe\Tick-Tack-Toe\obj\Debug\Tick-Tack-Toe.pdb
