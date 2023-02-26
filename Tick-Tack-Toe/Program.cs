@@ -32,9 +32,9 @@ namespace Tick_Tack_Toe
 	{
 		static int d = 3;
 
-		static bool CheckIfPlayerWonRow(int[,] board, int height, int width, int Player, int row, int col)
+		static bool CheckIfPlayerWonRow(int[,] board, int Boardx, int Boardy, int Player, int row, int col)
 		{
-			if (col + d > width) return false;
+			if (col + d > Boardx) return false;
 
 			for (int i = 0; i < d; i++)
 			{
@@ -44,9 +44,9 @@ namespace Tick_Tack_Toe
 			return true;
 		}
 
-		static bool CheckIfPlayerWonCol(int[,] board, int height, int width, int Player, int row, int col)
+		static bool CheckIfPlayerWonCol(int[,] board, int Boardx, int Boardy, int Player, int row, int col)
 		{
-			if (row + d > height) return false;
+			if (row + d > Boardy) return false;
 
 			for (int i = 0; i < d; i++)
 			{
@@ -56,10 +56,10 @@ namespace Tick_Tack_Toe
 			return true;
 		}
 
-		static bool CheckIfPlayerWonDiagUp(int[,] board, int height, int width, int Player, int row, int col)
+		static bool CheckIfPlayerWonDiagUp(int[,] board, int Boardx, int Boardy, int Player, int row, int col)
 		{
 			if (row - d < 0) return false;
-			if (col + d > width) return false;
+			if (col + d > Boardx) return false;
 
 			for (int i = 0; i < d; i++)
 			{
@@ -69,10 +69,10 @@ namespace Tick_Tack_Toe
 			return true;
 		}
 
-		static bool CheckIfPlayerWonDiagDown(int[,] board, int height, int width, int Player, int row, int col)
+		static bool CheckIfPlayerWonDiagDown(int[,] board, int Boardx, int Boardy, int Player, int row, int col)
 		{
-			if (row + d > height) return false;
-			if (col + d > width) return false;
+			if (row + d > Boardy) return false;
+			if (col + d > Boardx) return false;
 
 			for (int i = 0; i < d; i++)
 			{
@@ -82,17 +82,17 @@ namespace Tick_Tack_Toe
 			return true;
 		}
 
-		static bool CheckIfPlayerWon(int[,] board, int height, int width,int Player)
+		static bool CheckIfPlayerWon(int[,] board, int Boardx, int Boardy, int Player)
 		{
-			for (int row=0; row < height; row++)
+			for (int row=0; row < Boardy; row++)
 			{
-				for (int col = 0; col < width; col++)
+				for (int col = 0; col < Boardx; col++)
 				{
 					if (
-						CheckIfPlayerWonRow(board, height, width, Player, row, col) ||
-						CheckIfPlayerWonCol(board, height, width, Player, row, col) ||
-						CheckIfPlayerWonDiagUp(board, height, width, Player, row, col) ||
-						CheckIfPlayerWonDiagDown(board, height, width, Player, row, col)
+						CheckIfPlayerWonRow(board, Boardx, Boardy, Player, row, col) ||
+						CheckIfPlayerWonCol(board, Boardx, Boardy, Player, row, col) ||
+						CheckIfPlayerWonDiagUp(board, Boardx, Boardy, Player, row, col) ||
+						CheckIfPlayerWonDiagDown(board, Boardx, Boardy, Player, row, col)
 					)
 					{
 						return true;
@@ -101,24 +101,19 @@ namespace Tick_Tack_Toe
 			}
 			return false;
 		}
-	static void Table(int[,] board, int row, int col)
+	static void Table(int[,] board, int Boardx, int Boardy)
 		{
-			int i = 0;
-			foreach (int a in board)
+			for (int r = 0; r < Boardy; r++)
 			{
-				if (i == row)
+				for (int c = 0; c < Boardx; c++)
 				{
-					Console.WriteLine("|");
-					i = 1;
+					Console.Write($"|{board[r,c]}");
 				}
-				else i++;
-
-				Console.Write($"|{a}");
-				//Console.WriteLine($"Row: {row} i: {i}");
+				Console.WriteLine("|");
 			}
-			Console.WriteLine("|");
 		}
-		static (int, int) input(int width, int height)
+
+		static (int, int) input(int Boardx, int Boardy)
 		{
 			Console.WriteLine("Please enter two numbers separated with a comma.");
 			for(;;) { 
@@ -129,7 +124,7 @@ namespace Tick_Tack_Toe
 					int row = Int32.Parse(words[0]) - 1;
 					int col = Int32.Parse(words[1]) - 1;
 
-					if (0 <= row && row < height && 0 <= col && col < width)
+					if (0 <= row && row < Boardy && 0 <= col && col < Boardx)
 					{
 						return (row, col);
 					}
@@ -140,7 +135,7 @@ namespace Tick_Tack_Toe
 		}
 
 
-		static void PlacePiece(int Boardx, int Boardy,int Player, int[,] board)
+		static void PlacePiece(int Boardx, int Boardy, int Player, int[,] board)
 		{
 			for (; ; )
 			{
@@ -163,32 +158,27 @@ namespace Tick_Tack_Toe
 
 		static void Main(string[] args)
 		{
-			int row, col;
-			Console.WriteLine("Please enter two number for the size of the table");
+			Console.WriteLine("Please enter two number for the size of the table (width, height)");
 			string input = Console.ReadLine();
 			string[] words = input.Split(',', '.');
 			//check if a number is a decimal
 			//if (!Decimal.TryParse(words[0], out <output>))
 			//number will alwayes be positive
 			//Math.Abs();
-			row = Int32.Parse(words[0]);
-			col = Int32.Parse(words[1]);
-			int[,] board = new int[row, col]; // Define and initialize board array
+			int Boardx = Int32.Parse(words[1]);
+			int Boardy = Int32.Parse(words[0]);
+
+			int[,] board = new int[Boardy, Boardx]; // Define and initialize board array
 			//char x = 'B';
 			//Console.WriteLine((int)x);
 			for (int i = 0; ; i++) // inf loop
 			{
 				int Player = i % 2;
-				PlacePiece(row, col, Player, board);
+				PlacePiece(Boardx, Boardy, Player, board);
 				Console.WriteLine(Player);
-				Table(board, row, col);
-				/*
-				//Console.WriteLine("  A B C ");
-				Console.WriteLine($"|{board[0, 0]}|{board[0, 1]}|{board[0, 2]}|"); // can write 1-3 infront of the console.writeline to make it more readable
-				Console.WriteLine($"|{board[1, 0]}|{board[1, 1]}|{board[1, 2]}|");
-				Console.WriteLine($"|{board[2, 0]}|{board[2, 1]}|{board[2, 2]}|");
-				*/
-				if (CheckIfPlayerWon(board,row,col,Player))
+				Table(board, Boardx, Boardy);
+
+				if (CheckIfPlayerWon(board, Boardx, Boardy, Player))
 				{
 					Console.WriteLine($"Player {Player+1} Won");
 					//break;
