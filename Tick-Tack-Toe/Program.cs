@@ -206,6 +206,18 @@ namespace Tick_Tack_Toe
 				Color("Y is too big.", ConsoleColor.Red);
 				Color("Seting it to 15", ConsoleColor.Red);
 			}
+			if (Boardx <= 2)
+			{
+				Boardx = 3;
+				Color("X is too small.", ConsoleColor.Red);
+				Color("Seting it to 3", ConsoleColor.Red);
+			}
+			if (Boardy <= 2)
+			{
+				Boardy = 3;
+				Color("Y is too small.", ConsoleColor.Red);
+				Color("Seting it to 3", ConsoleColor.Red);
+			}
 			d = (Boardx + Boardy) / 2;
 			int MaxPlays = Boardx * Boardy;
 			Console.WriteLine("Do you want a ai?");
@@ -228,18 +240,6 @@ namespace Tick_Tack_Toe
 					//Console.WriteLine(Player);
 				Table(board, Boardx, Boardy);
 				//string comfirm = "";
-				if (CheckIfPlayerWon(board, Boardx, Boardy, Player))
-				{
-					Console.WriteLine($"Player {Player + 1} Won");
-					Console.ReadLine();
-					//break;
-				}
-				else if (MaxPlays == i)
-				{
-					Color("Game ended!!!", ConsoleColor.Magenta);
-					Console.ReadLine();
-					
-				}
 				if (Ai == "Y" || Ai == "y") //(Ai.ToLower = comfirm.ToLower)
 				{
 					if (Player % 2 == 0) //Player
@@ -257,6 +257,19 @@ namespace Tick_Tack_Toe
 				{
 					PlacePiece(Boardx, Boardy, Player, board);
 					Console.WriteLine(Player);
+				}
+				if (CheckIfPlayerWon(board, Boardx, Boardy, Player))
+				{
+					Table(board, Boardx, Boardy);
+					Color($"Player:{Player + 1} Won", ConsoleColor.Magenta);
+					Console.ReadLine();
+					//break;
+				}
+				else if (MaxPlays <= i)
+				{
+					Table(board, Boardx, Boardy);
+					Color("Draw", ConsoleColor.Magenta);
+					Console.ReadLine();
 				}
 				//Table(board, Boardx, Boardy);
 			}
