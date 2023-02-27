@@ -193,32 +193,41 @@ namespace Tick_Tack_Toe
 			string[] words = input.Split(',', '.', '/');
 			int Boardx = Int32.Parse(words[1]);
 			int Boardy = Int32.Parse(words[0]);
-			if (Boardx > 15)
+			int BMax = 15, BMin = 3;
+			if (Boardx > BMax)
 			{
-				Boardx = 15;
+				Boardx = BMax;
 
 				Color("X is too big.", ConsoleColor.Red);
 				Color("Seting it to 15", ConsoleColor.Red);
 			}
-			if (Boardy > 15)
+			if (Boardy > BMax)
 			{
-				Boardy = 15;
+				Boardy = BMax;
 				Color("Y is too big.", ConsoleColor.Red);
 				Color("Seting it to 15", ConsoleColor.Red);
 			}
-			if (Boardx <= 2)
+			if (Boardx <= BMin)
 			{
-				Boardx = 3;
+				Boardx = BMin;
 				Color("X is too small.", ConsoleColor.Red);
 				Color("Seting it to 3", ConsoleColor.Red);
 			}
-			if (Boardy <= 2)
+			if (Boardy <= BMin)
 			{
-				Boardy = 3;
+				Boardy = BMin;
 				Color("Y is too small.", ConsoleColor.Red);
 				Color("Seting it to 3", ConsoleColor.Red);
 			}
-			d = (Boardx + Boardy) / 2;
+			d = (Boardx + Boardy) / 2; //or i will ask
+			if (d < 2)
+			{
+				d = 3;
+			}
+			if (d > 5)
+			{
+				d = 5;
+			}
 			int MaxPlays = Boardx * Boardy;
 			Console.WriteLine("Do you want a ai?");
 			Color("Y/N", ConsoleColor.Green);
