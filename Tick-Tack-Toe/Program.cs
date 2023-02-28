@@ -34,10 +34,10 @@ namespace Tick_Tack_Toe
 	{
 		static int d = 3;
 
-		static void Color(string Error, ConsoleColor Color)
+		static void Color(string Message, ConsoleColor Color)
 		{
 			Console.ForegroundColor = Color;
-			Console.WriteLine(Error);
+			Console.WriteLine(Message);
 			Console.ResetColor();
 		}
 		static bool CheckIfPlayerWonRow(int[,] board, int Boardx, int Boardy, int Player, int row, int col)
