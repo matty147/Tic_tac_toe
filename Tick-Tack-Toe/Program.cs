@@ -119,6 +119,7 @@ namespace Tick_Tack_Toe
 		{
 			for (int r = 0; r < Boardy; r++)
 			{
+				//ColorNL($"{r + 1}: ", ConsoleColor.Red); look strange when with biger number than 9
 				for (int c = 0; c < Boardx; c++)
 				{
 					ColorNL("|", ConsoleColor.White);
@@ -207,7 +208,7 @@ namespace Tick_Tack_Toe
 		}
 		static void Main(string[] args)
 		{
-			Console.WriteLine("Please enter two number for the size of the table (width, height)");
+			Color("Please enter two number for the size of the table (width, height)", ConsoleColor.Green);
 			string input = Console.ReadLine();
 			string[] words = input.Split(',', '.', '/');
 			int Boardx = Int32.Parse(words[1]);
@@ -248,14 +249,20 @@ namespace Tick_Tack_Toe
 				d = 5;
 			}
 			int MaxPlays = Boardx * Boardy;
-			Console.WriteLine("Do you want a ai?");
+			Color("Do you want a ai?", ConsoleColor.Green);
 			Color("Y/N", ConsoleColor.Green);
 			string Ai = " ";
 			Ai = Console.ReadLine();
-				//check if a number is a decimal
-				//if (!Decimal.TryParse(words[0], out <output>))
-				//number will alwayes be positive
-				//Math.Abs();
+			/*if (Ai != "n"|| Ai != "N"|| Ai != "Y" || Ai != "y")
+			{
+				Color("Wrong input", ConsoleColor.Red);
+				Color("Seting the Ai to off", ConsoleColor.Red);
+				Ai = "N";
+			}*/
+			//check if a number is a decimal
+			//if (!Decimal.TryParse(words[0], out <output>))
+			//number will alwayes be positive
+			//Math.Abs();
 			int[,] board = new int[Boardy, Boardx];
 			// Define and initialize board array
 			//char x = 'B';
@@ -285,20 +292,21 @@ namespace Tick_Tack_Toe
 					PlacePiece(Boardx, Boardy, Player, board);
 					Console.WriteLine(Player);
 				}
-
 				if (CheckIfPlayerWon(board, Boardx, Boardy, Player))
 				{
 					Table(board, Boardx, Boardy);
 					Color($"Player:{Player + 1} Won", ConsoleColor.Magenta);
 					Console.ReadLine();
-					//break;
+					break;
 				}
-				else if (MaxPlays <= i)
+				if (MaxPlays == i)
 				{
 					Table(board, Boardx, Boardy);
 					Color("Draw", ConsoleColor.Magenta);
 					Console.ReadLine();
+					break;
 				}
+				Color($"i:{i} MaxPlays: {MaxPlays}", ConsoleColor.Gray);
 				//Table(board, Boardx, Boardy);
 			}
 			Console.Clear();
