@@ -212,7 +212,8 @@ namespace Tick_Tack_Toe
 			string input = Console.ReadLine();
 			string[] words = input.Split(',', '.', '/');
 			int Boardx = Int32.Parse(words[1]);
-			int Boardy = Int32.Parse(words[0]);
+			int	Boardy = Int32.Parse(words[0]);
+			
 			int BMax = 25, BMin = 3;
 			if (Boardx > BMax)
 			{
@@ -253,27 +254,27 @@ namespace Tick_Tack_Toe
 			Color("Y/N", ConsoleColor.Green);
 			string Ai = " ";
 			Ai = Console.ReadLine();
-			/*if (Ai != "n"|| Ai != "N"|| Ai != "Y" || Ai != "y")
-			{
-				Color("Wrong input", ConsoleColor.Red);
-				Color("Seting the Ai to off", ConsoleColor.Red);
-				Ai = "N";
-			}*/
-			//check if a number is a decimal
-			//if (!Decimal.TryParse(words[0], out <output>))
-			//number will alwayes be positive
-			//Math.Abs();
+				/*if (Ai != "n"|| Ai != "N"|| Ai != "Y" || Ai != "y")
+				{
+					Color("Wrong input", ConsoleColor.Red);
+					Color("Seting the Ai to off", ConsoleColor.Red);
+					Ai = "N";
+				}*/
+				//check if a number is a decimal
+				//if (!Decimal.TryParse(words[0], out <output>))
+				//number will alwayes be positive
+				//Math.Abs();
 			int[,] board = new int[Boardy, Boardx];
-			// Define and initialize board array
-			//char x = 'B';
-			//Console.WriteLine((int)x);
+				// Define and initialize board array
+				//char x = 'B';
+				//Console.WriteLine((int)x);
 			for (int i = 0; ; i++) // inf loop // strange setup of player selection // have to chiainge
 			{
 				int Player = i % 2;
 					//PlacePiece(Boardx, Boardy, Player, board);
 					//Console.WriteLine(Player);
 				Table(board, Boardx, Boardy);
-				//string comfirm = "";
+					//string comfirm = "";
 				if (Ai == "Y" || Ai == "y") //(Ai.ToLower = comfirm.ToLower)
 				{
 					if (Player % 2 == 0) //Player
@@ -291,6 +292,11 @@ namespace Tick_Tack_Toe
 				{
 					PlacePiece(Boardx, Boardy, Player, board);
 					Console.WriteLine(Player);
+				}else
+				{
+					Color("Wrong input", ConsoleColor.Red);
+					Console.ReadKey();
+					break;
 				}
 				if (CheckIfPlayerWon(board, Boardx, Boardy, Player))
 				{
