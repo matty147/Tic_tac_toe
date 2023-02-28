@@ -40,6 +40,12 @@ namespace Tick_Tack_Toe
 			Console.WriteLine(Message);
 			Console.ResetColor();
 		}
+		static void ColorNL(string Message, ConsoleColor Color)
+		{
+			Console.ForegroundColor = Color;
+			Console.Write(Message);
+			Console.ResetColor();
+		}
 		static bool CheckIfPlayerWonRow(int[,] board, int Boardx, int Boardy, int Player, int row, int col)
 		{
 			if (col + d > Boardx) return false;
@@ -115,7 +121,20 @@ namespace Tick_Tack_Toe
 			{
 				for (int c = 0; c < Boardx; c++)
 				{
-						Console.Write($"|{board[r, c]}");
+					ColorNL("|", ConsoleColor.White);
+					if (board[r, c] == 1)
+					{
+						ColorNL($"{board[r, c]}", ConsoleColor.DarkYellow);
+						//Console.Write($"|{board[r, c]}");
+					}
+					else if (board[r,c] == 2)
+					{
+						ColorNL($"{board[r, c]}", ConsoleColor.Blue);
+					}
+					else if (board[r,c] == 0)
+					{
+						ColorNL($"{board[r, c]}",ConsoleColor.White);
+					}
 				}
 				Console.WriteLine("|");
 			}
@@ -126,7 +145,7 @@ namespace Tick_Tack_Toe
 			Console.WriteLine("Please enter two numbers separated with a comma.");
 			for (; ; ) {
 				string input = Console.ReadLine();
-				string[] words = input.Split(',', '.');
+				string[] words = input.Split(',', '.','/');
 				if (words.Length >= 2) // Check if input contains at least two words
 				{
 					int row = Int32.Parse(words[0]) - 1;
@@ -193,31 +212,31 @@ namespace Tick_Tack_Toe
 			string[] words = input.Split(',', '.', '/');
 			int Boardx = Int32.Parse(words[1]);
 			int Boardy = Int32.Parse(words[0]);
-			int BMax = 15, BMin = 3;
+			int BMax = 25, BMin = 3;
 			if (Boardx > BMax)
 			{
 				Boardx = BMax;
 
 				Color("X is too big.", ConsoleColor.Red);
-				Color("Seting it to 15", ConsoleColor.Red);
+				Color($"Seting it to {BMax}", ConsoleColor.Red);
 			}
 			if (Boardy > BMax)
 			{
 				Boardy = BMax;
 				Color("Y is too big.", ConsoleColor.Red);
-				Color("Seting it to 15", ConsoleColor.Red);
+				Color($"Seting it to {BMax}", ConsoleColor.Red);
 			}
-			if (Boardx <= BMin)
+			if (Boardx < BMin)
 			{
 				Boardx = BMin;
 				Color("X is too small.", ConsoleColor.Red);
-				Color("Seting it to 3", ConsoleColor.Red);
+				Color($"Seting it to {BMin}", ConsoleColor.Red);
 			}
-			if (Boardy <= BMin)
+			if (Boardy < BMin)
 			{
 				Boardy = BMin;
 				Color("Y is too small.", ConsoleColor.Red);
-				Color("Seting it to 3", ConsoleColor.Red);
+				Color($"Seting it to {BMin}", ConsoleColor.Red);
 			}
 			d = (Boardx + Boardy) / 2; //or i will ask
 			if (d < 2)
@@ -238,12 +257,11 @@ namespace Tick_Tack_Toe
 				//number will alwayes be positive
 				//Math.Abs();
 			int[,] board = new int[Boardy, Boardx];
-				// Define and initialize board array
-				//char x = 'B';
-				//Console.WriteLine((int)x);
+			// Define and initialize board array
+			//char x = 'B';
+			//Console.WriteLine((int)x);
 			for (int i = 0; ; i++) // inf loop // strange setup of player selection // have to chiainge
 			{
-
 				int Player = i % 2;
 					//PlacePiece(Boardx, Boardy, Player, board);
 					//Console.WriteLine(Player);
@@ -267,6 +285,7 @@ namespace Tick_Tack_Toe
 					PlacePiece(Boardx, Boardy, Player, board);
 					Console.WriteLine(Player);
 				}
+
 				if (CheckIfPlayerWon(board, Boardx, Boardy, Player))
 				{
 					Table(board, Boardx, Boardy);
@@ -282,6 +301,7 @@ namespace Tick_Tack_Toe
 				}
 				//Table(board, Boardx, Boardy);
 			}
+			Console.Clear();
 			Console.WriteLine("Achievement get: How did we get here?");
 			Console.ReadKey();
 		}	
