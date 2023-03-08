@@ -143,9 +143,11 @@ namespace Tick_Tack_Toe
 
 		static (int, int) input(int Boardx, int Boardy)
 		{
-			Console.WriteLine("Please enter two numbers separated with a comma.");
+			Color("Please enter two numbers separated with a comma.", ConsoleColor.Green);
 			for (; ; ) {
+				Console.ForegroundColor = ConsoleColor.Blue;
 				string input = Console.ReadLine();
+				Console.ResetColor();
 				string[] words = input.Split(',', '.','/');
 				if (words.Length >= 2) // Check if input contains at least two words
 				{
@@ -158,24 +160,27 @@ namespace Tick_Tack_Toe
 					}
 
 				}
-				Console.WriteLine("Invalid input");
+				Color("Invalid input", ConsoleColor.Red);
 			}
 		}
 
-
-		static void PlacePiece(int Boardx, int Boardy, int Player, int[,] board)
+		static  List<int> PlacePiece(int Boardx, int Boardy, int Player, int[,] board)
 		{
+			List<int> LastPlayed = new List<int>();
 			for (; ; )
 			{
 				(int, int) place = input(Boardx, Boardy);
 				int row = place.Item1;
 				int col = place.Item2;
 
+				LastPlayed.Add(row);
+				LastPlayed.Add(col);
+
 				if (board[row, col] == 0)
 				{
-					Console.WriteLine($"Row:{row + 1} Col:{col + 1}");
+					Color($"Row:{row + 1} Col:{col + 1}", ConsoleColor.Blue);
 					board[row, col] = Player + 1;
-					return;
+					return LastPlayed;
 				}
 				else
 				{
@@ -184,7 +189,7 @@ namespace Tick_Tack_Toe
 			}
 		}
 
-		static void AiPlay(int[,] board, int Boardx, int Boardy, int Player)
+		static void AiPlayT1(int[,] board, int Boardx, int Boardy, int Player)
 		{
 			Random rnd = new Random();
 			for (; ; )
@@ -194,10 +199,10 @@ namespace Tick_Tack_Toe
 
 				if (board[AiOptionX, AiOptionY] == 0)
 				{
-					Console.WriteLine($"Row:{AiOptionX + 1} Col:{AiOptionY + 1}");
-					board[AiOptionX, AiOptionY] = Player +1; //can get player 3+
-					Console.WriteLine($"Y:{AiOptionY}");
-					Console.WriteLine($"X:{AiOptionX}");
+					Color($"Row:{AiOptionX + 1} Col:{AiOptionY + 1}", ConsoleColor.DarkYellow);
+					board[AiOptionX, AiOptionY] = Player +1;
+					//Console.WriteLine($"Y:{AiOptionY}");
+					//Console.WriteLine($"X:{AiOptionX}");
 					return;
 				}
 				else
@@ -206,13 +211,44 @@ namespace Tick_Tack_Toe
 				}
 			}
 		}
+		static void AiPlayT2(int[,] board, int Boardx, int Boardy, int Player,List<int> LastPiecePlayed)
+		{
+			int LPY = LastPiecePlayed[0] +1;
+			int LPX = LastPiecePlayed[1] +1;
+			//Color($"LPY: {LPY - 1} LPX: {LPX - 1}", ConsoleColor.Blue);
+			//Color($"", ConsoleColor.White);
+			Random rnd = new Random();
+			for (; ; )
+			{
+				int Variance = rnd.Next(0, 3);
+				int AiOptionY = rnd.Next(LPY - Variance, LPY + Variance);
+				int AiOptionX = rnd.Next(LPX - Variance, LPX + Variance);
+				if (0 <= AiOptionY && AiOptionY < Boardy && 0 <= AiOptionX && AiOptionX < Boardx)
+				{
+					if (board[AiOptionX, AiOptionY] == 0)
+					{
+						//Color($"X: {AiOptionX} Y: {AiOptionY}", ConsoleColor.DarkYellow);
+						board[AiOptionX, AiOptionY] = 2;
+						Color($"Row:{AiOptionX} Col:{AiOptionY}", ConsoleColor.DarkYellow);
+						break;
+					}
+					//else Color("Try again", ConsoleColor.Red);
+				}
+				/*else
+				{
+					Color("Try again", ConsoleColor.Red);
+				}*/
+			}
+		}
 		static void Main(string[] args)
 		{
 			Color("Please enter two number for the size of the table (width, height)", ConsoleColor.Green);
 			string input = Console.ReadLine();
+			string PLastPlace = input;
 			string[] words = input.Split(',', '.', '/');
 			int Boardx = Int32.Parse(words[1]);
 			int	Boardy = Int32.Parse(words[0]);
+			string AiType = "";
 			
 			int BMax = 25, BMin = 3;
 			if (Boardx > BMax)
@@ -254,20 +290,25 @@ namespace Tick_Tack_Toe
 			Color("Y/N", ConsoleColor.Green);
 			string Ai = " ";
 			Ai = Console.ReadLine();
-				/*if (Ai != "n"|| Ai != "N"|| Ai != "Y" || Ai != "y")
-				{
-					Color("Wrong input", ConsoleColor.Red);
-					Color("Seting the Ai to off", ConsoleColor.Red);
-					Ai = "N";
-				}*/
-				//check if a number is a decimal
-				//if (!Decimal.TryParse(words[0], out <output>))
-				//number will alwayes be positive
-				//Math.Abs();
+			/*if (Ai != "n"|| Ai != "N"|| Ai != "Y" || Ai != "y")
+			{
+				Color("Wrong input", ConsoleColor.Red);
+				Color("Seting the Ai to off", ConsoleColor.Red);
+				Ai = "N";
+			}*/
+			//check if a number is a decimal
+			//if (!Decimal.TryParse(words[0], out <output>))
+			//number will alwayes be positive
+			//Math.Abs();
+			Color("Please enter the type of the bot (1/2/3)", ConsoleColor.Green);
+			Color("(invalid input will result in the game going singleplayer)", ConsoleColor.DarkYellow);
+			AiType = Console.ReadLine();
 			int[,] board = new int[Boardy, Boardx];
-				// Define and initialize board array
-				//char x = 'B';
-				//Console.WriteLine((int)x);
+			// Define and initialize board array
+			//char x = 'B';
+			//Console.WriteLine((int)x);
+			List<int> LastPiecePlayed = new List<int>();
+			Console.Clear();
 			for (int i = 0; ; i++) // inf loop // strange setup of player selection // have to chiainge
 			{
 				int Player = i % 2;
@@ -279,19 +320,26 @@ namespace Tick_Tack_Toe
 				{
 					if (Player % 2 == 0) //Player
 					{
-						PlacePiece(Boardx, Boardy, Player, board);
-						Console.WriteLine(Player);
+						LastPiecePlayed = PlacePiece(Boardx, Boardy, Player, board);
+						//Console.WriteLine(Player);
 					}
 					else if (Player % 2 == 1) //Ai
 					{
-						AiPlay(board, Boardx, Boardy, Player);
+						if (AiType == "1")
+						{
+							AiPlayT1(board, Boardx, Boardy, Player);
+						}
+						else if (AiType == "2")
+						{
+							AiPlayT2(board, Boardx, Boardy, Player,LastPiecePlayed);
+						}
 						Thread.Sleep(1000);
 					}
 				}
 				else if (Ai == "N" || Ai == "n")
 				{
 					PlacePiece(Boardx, Boardy, Player, board);
-					Console.WriteLine(Player);
+					//Console.WriteLine(Player);
 				}else
 				{
 					Color("Wrong input", ConsoleColor.Red);
@@ -312,8 +360,9 @@ namespace Tick_Tack_Toe
 					Console.ReadLine();
 					break;
 				}
-				Color($"i:{i} MaxPlays: {MaxPlays}", ConsoleColor.Gray);
+				//Color($"i:{i} MaxPlays: {MaxPlays}", ConsoleColor.Gray);
 				//Table(board, Boardx, Boardy);
+				//Console.Clear(); //looks like a good place
 			}
 			Console.Clear();
 			Console.WriteLine("Achievement get: How did we get here?");
