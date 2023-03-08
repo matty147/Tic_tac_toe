@@ -8,105 +8,135 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Tick_Tack_Toe
 {
-	/*
-	class Board
-	{
-		int height;
-		int width;
-		int[,] data = new int[3, 3];
-
-
-		public void printBoard()
-		{
-
-		}
-
-		public void placePiece(int row, int col)
-		{
-
-		}
-
-		public bool isFull() { return true; }
-		public bool isWinning() { return true; }
-	}
-	*/
-	internal class Program
-	{
-		static int d = 3;
-
-		static void Color(string Message, ConsoleColor Color)
+	public static class MyConsole {
+		public static void Color(string Message, ConsoleColor Color)
 		{
 			Console.ForegroundColor = Color;
 			Console.WriteLine(Message);
 			Console.ResetColor();
 		}
-		static void ColorNL(string Message, ConsoleColor Color)
+		public static void ColorNL(string Message, ConsoleColor Color)
 		{
 			Console.ForegroundColor = Color;
 			Console.Write(Message);
 			Console.ResetColor();
 		}
-		static bool CheckIfPlayerWonRow(int[,] board, int Boardx, int Boardy, int Player, int row, int col)
+	}
+
+	public class Board
+	{
+		public int height { get; }
+		public int width { get; }
+		public int[,] data { get; }
+
+		public Board(int width, int height)
 		{
-			if (col + d > Boardx) return false;
+			this.width = width;
+			this.height = height;
+			this.data = new int[height, width];
+		}
+
+		public void print()
+		{
+			for (int r = 0; r < height; r++)
+			{
+				//ColorNL($"{r + 1}: ", ConsoleColor.Red); look strange when with biger number than 9
+				for (int c = 0; c < width; c++)
+				{
+					MyConsole.ColorNL("|", ConsoleColor.White);
+					if (data[r, c] == 1)
+					{
+						MyConsole.ColorNL($"{data[r, c]}", ConsoleColor.Blue);
+						//Console.Write($"|{board[r, c]}");
+					}
+					else if (data[r, c] == 2)
+					{
+						MyConsole.ColorNL($"{data[r, c]}", ConsoleColor.DarkYellow);
+					}
+					else if (data[r, c] == 0)
+					{
+						MyConsole.ColorNL($"{data[r, c]}", ConsoleColor.White);
+					}
+				}
+				Console.WriteLine("|");
+			}
+		}
+
+		public void placePiece(int row, int col)
+		{
+			// todo
+		}
+
+		public bool isFull() { return true; }	// todo
+		
+	}
+
+	internal class Program
+	{
+		static int d = 3;
+
+
+		static bool CheckIfPlayerWonRow(Board board, int Player, int row, int col)
+		{
+			if (col + d > board.width) return false;
 
 			for (int i = 0; i < d; i++)
 			{
-				if (board[row, col + i] != Player + 1) return false;
+				if (board.data[row, col + i] != Player + 1) return false;
 			}
 
 			return true;
 		}
 
-		static bool CheckIfPlayerWonCol(int[,] board, int Boardx, int Boardy, int Player, int row, int col)
+		static bool CheckIfPlayerWonCol(Board board, int Player, int row, int col)
 		{
-			if (row + d > Boardy) return false;
+			if (row + d > board.height) return false;
 
 			for (int i = 0; i < d; i++)
 			{
-				if (board[row + i, col] != Player + 1) return false;
+				if (board.data[row + i, col] != Player + 1) return false;
 			}
 
 			return true;
 		}
 
-		static bool CheckIfPlayerWonDiagUp(int[,] board, int Boardx, int Boardy, int Player, int row, int col)
+		static bool CheckIfPlayerWonDiagUp(Board board, int Player, int row, int col)
 		{
 			if (row - d < 0) return false;
-			if (col + d > Boardx) return false;
+			if (col + d > board.width) return false;
 
 			for (int i = 0; i < d; i++)
 			{
-				if (board[row - i, col + i] != Player + 1) return false;
+				if (board.data[row - i, col + i] != Player + 1) return false;
 			}
 
 			return true;
 		}
 
-		static bool CheckIfPlayerWonDiagDown(int[,] board, int Boardx, int Boardy, int Player, int row, int col)
+		static bool CheckIfPlayerWonDiagDown(Board board, int Player, int row, int col)
 		{
-			if (row + d > Boardy) return false;
-			if (col + d > Boardx) return false;
+			if (row + d > board.height) return false;
+			if (col + d > board.width) return false;
 
 			for (int i = 0; i < d; i++)
 			{
-				if (board[row + i, col + i] != Player + 1) return false;
+				if (board.data[row + i, col + i] != Player + 1) return false;
 			}
 
 			return true;
 		}
 
-		static bool CheckIfPlayerWon(int[,] board, int Boardx, int Boardy, int Player)
+		static bool CheckIfPlayerWon(Board board, int Player)
 		{
-			for (int row = 0; row < Boardy; row++)
+			for (int row = 0; row < board.height; row++)
 			{
-				for (int col = 0; col < Boardx; col++)
+				for (int col = 0; col < board.width; col++)
 				{
 					if (
-						CheckIfPlayerWonRow(board, Boardx, Boardy, Player, row, col) ||
-						CheckIfPlayerWonCol(board, Boardx, Boardy, Player, row, col) ||
-						CheckIfPlayerWonDiagUp(board, Boardx, Boardy, Player, row, col) ||
-						CheckIfPlayerWonDiagDown(board, Boardx, Boardy, Player, row, col)
+						CheckIfPlayerWonRow(board, Player, row, col) ||
+						CheckIfPlayerWonCol(board, Player, row, col) ||
+						CheckIfPlayerWonDiagUp(board, Player, row, col) ||
+						CheckIfPlayerWonDiagDown(board, Player, row, col)
 					)
 					{
 						return true;
@@ -115,35 +145,11 @@ namespace Tick_Tack_Toe
 			}
 			return false;
 		}
-		static void Table(int[,] board, int Boardx, int Boardy)
-		{
-			for (int r = 0; r < Boardy; r++)
-			{
-				//ColorNL($"{r + 1}: ", ConsoleColor.Red); look strange when with biger number than 9
-				for (int c = 0; c < Boardx; c++)
-				{
-					ColorNL("|", ConsoleColor.White);
-					if (board[r, c] == 1)
-					{
-						ColorNL($"{board[r, c]}", ConsoleColor.DarkYellow);
-						//Console.Write($"|{board[r, c]}");
-					}
-					else if (board[r,c] == 2)
-					{
-						ColorNL($"{board[r, c]}", ConsoleColor.Blue);
-					}
-					else if (board[r,c] == 0)
-					{
-						ColorNL($"{board[r, c]}",ConsoleColor.White);
-					}
-				}
-				Console.WriteLine("|");
-			}
-		}
+
 
 		static (int, int) input(int Boardx, int Boardy)
 		{
-			Color("Please enter two numbers separated with a comma.", ConsoleColor.Green);
+			MyConsole.Color("Please enter two numbers separated with a comma.", ConsoleColor.Green);
 			for (; ; ) {
 				Console.ForegroundColor = ConsoleColor.Blue;
 				string input = Console.ReadLine();
@@ -160,58 +166,58 @@ namespace Tick_Tack_Toe
 					}
 
 				}
-				Color("Invalid input", ConsoleColor.Red);
+				MyConsole.Color("Invalid input", ConsoleColor.Red);
 			}
 		}
 
-		static  List<int> PlacePiece(int Boardx, int Boardy, int Player, int[,] board)
+		static  List<int> PlacePiece(Board board, int Player)
 		{
 			List<int> LastPlayed = new List<int>();
 			for (; ; )
 			{
-				(int, int) place = input(Boardx, Boardy);
+				(int, int) place = input(board.width, board.height);
 				int row = place.Item1;
 				int col = place.Item2;
 
 				LastPlayed.Add(row);
 				LastPlayed.Add(col);
 
-				if (board[row, col] == 0)
+				if (board.data[row, col] == 0)
 				{
-					Color($"Row:{row + 1} Col:{col + 1}", ConsoleColor.Blue);
-					board[row, col] = Player + 1;
+					MyConsole.Color($"Row:{row + 1} Col:{col + 1}", ConsoleColor.Blue);
+					board.data[row, col] = Player + 1;
 					return LastPlayed;
 				}
 				else
 				{
-					Color("Place already taken", ConsoleColor.Red);
+					MyConsole.Color("Place already taken", ConsoleColor.Red);
 				}
 			}
 		}
 
-		static void AiPlayT1(int[,] board, int Boardx, int Boardy, int Player)
+		static void AiPlayT1(Board board, int Player)
 		{
 			Random rnd = new Random();
 			for (; ; )
 			{
-				int AiOptionY = rnd.Next(0, Boardx);
-				int AiOptionX = rnd.Next(0, Boardy);
+				int AiOptionY = rnd.Next(0, board.height);
+				int AiOptionX = rnd.Next(0, board.width);
 
-				if (board[AiOptionX, AiOptionY] == 0)
+				if (board.data[AiOptionX, AiOptionY] == 0)
 				{
-					Color($"Row:{AiOptionX + 1} Col:{AiOptionY + 1}", ConsoleColor.DarkYellow);
-					board[AiOptionX, AiOptionY] = Player +1;
+					MyConsole.Color($"Row:{AiOptionX + 1} Col:{AiOptionY + 1}", ConsoleColor.DarkYellow);
+					board.data[AiOptionX, AiOptionY] = Player +1;
 					//Console.WriteLine($"Y:{AiOptionY}");
 					//Console.WriteLine($"X:{AiOptionX}");
 					return;
 				}
 				else
 				{
-					Color("Ai failed. Place already taken", ConsoleColor.Red);
+					MyConsole.Color("Ai failed. Place already taken", ConsoleColor.Red);
 				}
 			}
 		}
-		static void AiPlayT2(int[,] board, int Boardx, int Boardy, int Player,List<int> LastPiecePlayed)
+		static void AiPlayT2(Board board, int Player,List<int> LastPiecePlayed)
 		{
 			int LPY = LastPiecePlayed[0] +1;
 			int LPX = LastPiecePlayed[1] +1;
@@ -223,13 +229,13 @@ namespace Tick_Tack_Toe
 				int Variance = rnd.Next(0, 3);
 				int AiOptionY = rnd.Next(LPY - Variance, LPY + Variance);
 				int AiOptionX = rnd.Next(LPX - Variance, LPX + Variance);
-				if (0 <= AiOptionY && AiOptionY < Boardy && 0 <= AiOptionX && AiOptionX < Boardx)
+				if (0 <= AiOptionY && AiOptionY < board.height && 0 <= AiOptionX && AiOptionX < board.width)
 				{
-					if (board[AiOptionX, AiOptionY] == 0)
+					if (board.data[AiOptionY, AiOptionX] == 0)
 					{
 						//Color($"X: {AiOptionX} Y: {AiOptionY}", ConsoleColor.DarkYellow);
-						board[AiOptionX, AiOptionY] = 2;
-						Color($"Row:{AiOptionX} Col:{AiOptionY}", ConsoleColor.DarkYellow);
+						board.data[AiOptionY, AiOptionX] = 2;
+						MyConsole.Color($"Row:{AiOptionY+1} Col:{AiOptionX+1}", ConsoleColor.DarkYellow);
 						break;
 					}
 					//else Color("Try again", ConsoleColor.Red);
@@ -242,7 +248,7 @@ namespace Tick_Tack_Toe
 		}
 		static void Main(string[] args)
 		{
-			Color("Please enter two number for the size of the table (width, height)", ConsoleColor.Green);
+			MyConsole.Color("Please enter two number for the size of the table (width, height)", ConsoleColor.Green);
 			string input = Console.ReadLine();
 			string PLastPlace = input;
 			string[] words = input.Split(',', '.', '/');
@@ -255,26 +261,26 @@ namespace Tick_Tack_Toe
 			{
 				Boardx = BMax;
 
-				Color("X is too big.", ConsoleColor.Red);
-				Color($"Seting it to {BMax}", ConsoleColor.Red);
+				MyConsole.Color("X is too big.", ConsoleColor.Red);
+				MyConsole.Color($"Seting it to {BMax}", ConsoleColor.Red);
 			}
 			if (Boardy > BMax)
 			{
 				Boardy = BMax;
-				Color("Y is too big.", ConsoleColor.Red);
-				Color($"Seting it to {BMax}", ConsoleColor.Red);
+				MyConsole.Color("Y is too big.", ConsoleColor.Red);
+				MyConsole.Color($"Seting it to {BMax}", ConsoleColor.Red);
 			}
 			if (Boardx < BMin)
 			{
 				Boardx = BMin;
-				Color("X is too small.", ConsoleColor.Red);
-				Color($"Seting it to {BMin}", ConsoleColor.Red);
+				MyConsole.Color("X is too small.", ConsoleColor.Red);
+				MyConsole.Color($"Seting it to {BMin}", ConsoleColor.Red);
 			}
 			if (Boardy < BMin)
 			{
 				Boardy = BMin;
-				Color("Y is too small.", ConsoleColor.Red);
-				Color($"Seting it to {BMin}", ConsoleColor.Red);
+				MyConsole.Color("Y is too small.", ConsoleColor.Red);
+				MyConsole.Color($"Seting it to {BMin}", ConsoleColor.Red);
 			}
 			d = (Boardx + Boardy) / 2; //or i will ask
 			if (d < 2)
@@ -286,8 +292,8 @@ namespace Tick_Tack_Toe
 				d = 5;
 			}
 			int MaxPlays = Boardx * Boardy;
-			Color("Do you want a ai?", ConsoleColor.Green);
-			Color("Y/N", ConsoleColor.Green);
+			MyConsole.Color("Do you want a ai?", ConsoleColor.Green);
+			MyConsole.Color("Y/N", ConsoleColor.Green);
 			string Ai = " ";
 			Ai = Console.ReadLine();
 			/*if (Ai != "n"|| Ai != "N"|| Ai != "Y" || Ai != "y")
@@ -300,10 +306,10 @@ namespace Tick_Tack_Toe
 			//if (!Decimal.TryParse(words[0], out <output>))
 			//number will alwayes be positive
 			//Math.Abs();
-			Color("Please enter the type of the bot (1/2/3)", ConsoleColor.Green);
-			Color("(invalid input will result in the game going singleplayer)", ConsoleColor.DarkYellow);
+			MyConsole.Color("Please enter the type of the bot (1/2/3)", ConsoleColor.Green);
+			MyConsole.Color("(invalid input will result in the game going singleplayer)", ConsoleColor.DarkYellow);
 			AiType = Console.ReadLine();
-			int[,] board = new int[Boardy, Boardx];
+			Board board = new Board(Boardy, Boardx);
 			// Define and initialize board array
 			//char x = 'B';
 			//Console.WriteLine((int)x);
@@ -312,51 +318,51 @@ namespace Tick_Tack_Toe
 			for (int i = 0; ; i++) // inf loop // strange setup of player selection // have to chiainge
 			{
 				int Player = i % 2;
-					//PlacePiece(Boardx, Boardy, Player, board);
-					//Console.WriteLine(Player);
-				Table(board, Boardx, Boardy);
+				//PlacePiece(Boardx, Boardy, Player, board);
+				//Console.WriteLine(Player);
+				board.print();
 					//string comfirm = "";
 				if (Ai == "Y" || Ai == "y") //(Ai.ToLower = comfirm.ToLower)
 				{
 					if (Player % 2 == 0) //Player
 					{
-						LastPiecePlayed = PlacePiece(Boardx, Boardy, Player, board);
+						LastPiecePlayed = PlacePiece(board, Player);
 						//Console.WriteLine(Player);
 					}
 					else if (Player % 2 == 1) //Ai
 					{
 						if (AiType == "1")
 						{
-							AiPlayT1(board, Boardx, Boardy, Player);
+							AiPlayT1(board, Player);
 						}
 						else if (AiType == "2")
 						{
-							AiPlayT2(board, Boardx, Boardy, Player,LastPiecePlayed);
+							AiPlayT2(board, Player, LastPiecePlayed);
 						}
 						Thread.Sleep(1000);
 					}
 				}
 				else if (Ai == "N" || Ai == "n")
 				{
-					PlacePiece(Boardx, Boardy, Player, board);
+					PlacePiece(board, Player);
 					//Console.WriteLine(Player);
 				}else
 				{
-					Color("Wrong input", ConsoleColor.Red);
+					MyConsole.Color("Wrong input", ConsoleColor.Red);
 					Console.ReadKey();
 					break;
 				}
-				if (CheckIfPlayerWon(board, Boardx, Boardy, Player))
+				if (CheckIfPlayerWon(board, Player))
 				{
-					Table(board, Boardx, Boardy);
-					Color($"Player:{Player + 1} Won", ConsoleColor.Magenta);
+					board.print();
+					MyConsole.Color($"Player:{Player + 1} Won", ConsoleColor.Magenta);
 					Console.ReadLine();
 					break;
 				}
 				if (MaxPlays == i)
 				{
-					Table(board, Boardx, Boardy);
-					Color("Draw", ConsoleColor.Magenta);
+					board.print();
+					MyConsole.Color("Draw", ConsoleColor.Magenta);
 					Console.ReadLine();
 					break;
 				}
