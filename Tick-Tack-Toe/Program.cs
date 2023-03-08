@@ -71,6 +71,18 @@ namespace Tick_Tack_Toe
 		
 	}
 
+	public class Xy
+	{
+		public int x{ get; }
+		public int y { get; }
+
+		public Xy(int x, int y)
+		{
+			this.x = x;
+			this.y = y;
+		}
+	}
+
 	internal class Program
 	{
 		static int d = 3;
@@ -246,16 +258,15 @@ namespace Tick_Tack_Toe
 				}*/
 			}
 		}
-		static void Main(string[] args)
+
+		private static Xy GetBoardSize()
 		{
 			MyConsole.Color("Please enter two number for the size of the table (width, height)", ConsoleColor.Green);
 			string input = Console.ReadLine();
 			string PLastPlace = input;
 			string[] words = input.Split(',', '.', '/');
 			int Boardx = Int32.Parse(words[1]);
-			int	Boardy = Int32.Parse(words[0]);
-			string AiType = "";
-			
+			int Boardy = Int32.Parse(words[0]);
 			int BMax = 25, BMin = 3;
 			if (Boardx > BMax)
 			{
@@ -282,20 +293,59 @@ namespace Tick_Tack_Toe
 				MyConsole.Color("Y is too small.", ConsoleColor.Red);
 				MyConsole.Color($"Seting it to {BMin}", ConsoleColor.Red);
 			}
-			d = (Boardx + Boardy) / 2; //or i will ask
-			if (d < 2)
-			{
-				d = 3;
-			}
-			if (d > 5)
-			{
-				d = 5;
-			}
-			int MaxPlays = Boardx * Boardy;
+			return new Xy(Boardx, Boardy);
+		}
+
+		enum AiType
+		{
+			None,
+			Random,
+			Local
+		}
+
+		private static AiType GetAiType()
+		{
 			MyConsole.Color("Do you want a ai?", ConsoleColor.Green);
 			MyConsole.Color("Y/N", ConsoleColor.Green);
-			string Ai = " ";
-			Ai = Console.ReadLine();
+			string input = Console.ReadLine();
+
+			if (input.ToLower() == "n")
+			{
+				return AiType.None;
+			}
+
+			MyConsole.Color("Please enter the type of the bot (1/2/3)", ConsoleColor.Green);
+			MyConsole.Color("(invalid input will result in the game going singleplayer)", ConsoleColor.DarkYellow);
+			input = Console.ReadLine();
+
+			if (input == "1") {
+				return AiType.Random;
+			}
+			
+			return AiType.Local;
+
+			//{
+			//	MyConsole.Color("Wrong input", ConsoleColor.Red);
+			//	Console.ReadKey();
+			//	break;
+			//}
+
+		}
+
+
+		static void Main(string[] args)
+		{
+			Xy boardSize = GetBoardSize();
+			AiType aiType = GetAiType();
+
+			d = (boardSize.x + boardSize.y) / 2; //or i will ask
+
+			d = Math.Max(d, 3);
+			d = Math.Min(d, 5);
+
+			int MaxPlays = boardSize.x * boardSize.y;
+
+
 			/*if (Ai != "n"|| Ai != "N"|| Ai != "Y" || Ai != "y")
 			{
 				Color("Wrong input", ConsoleColor.Red);
@@ -306,24 +356,26 @@ namespace Tick_Tack_Toe
 			//if (!Decimal.TryParse(words[0], out <output>))
 			//number will alwayes be positive
 			//Math.Abs();
-			MyConsole.Color("Please enter the type of the bot (1/2/3)", ConsoleColor.Green);
-			MyConsole.Color("(invalid input will result in the game going singleplayer)", ConsoleColor.DarkYellow);
-			AiType = Console.ReadLine();
-			Board board = new Board(Boardy, Boardx);
+
+			Board board = new Board(boardSize.x, boardSize.y);
 			// Define and initialize board array
 			//char x = 'B';
 			//Console.WriteLine((int)x);
 			List<int> LastPiecePlayed = new List<int>();
 			Console.Clear();
+
 			for (int i = 0; ; i++) // inf loop // strange setup of player selection // have to chiainge
 			{
 				int Player = i % 2;
 				//PlacePiece(Boardx, Boardy, Player, board);
 				//Console.WriteLine(Player);
 				board.print();
-					//string comfirm = "";
-				if (Ai == "Y" || Ai == "y") //(Ai.ToLower = comfirm.ToLower)
+				//string comfirm = "";
+				if (aiType == AiType.None)
 				{
+					PlacePiece(board, Player);
+				}
+				else { 
 					if (Player % 2 == 0) //Player
 					{
 						LastPiecePlayed = PlacePiece(board, Player);
@@ -331,27 +383,20 @@ namespace Tick_Tack_Toe
 					}
 					else if (Player % 2 == 1) //Ai
 					{
-						if (AiType == "1")
+						switch (aiType)
 						{
-							AiPlayT1(board, Player);
+							case AiType.Random:
+								AiPlayT1(board, Player);
+								break;
+							case AiType.Local:
+								AiPlayT2(board, Player, LastPiecePlayed);
+								break;
 						}
-						else if (AiType == "2")
-						{
-							AiPlayT2(board, Player, LastPiecePlayed);
-						}
+
 						Thread.Sleep(1000);
 					}
 				}
-				else if (Ai == "N" || Ai == "n")
-				{
-					PlacePiece(board, Player);
-					//Console.WriteLine(Player);
-				}else
-				{
-					MyConsole.Color("Wrong input", ConsoleColor.Red);
-					Console.ReadKey();
-					break;
-				}
+
 				if (CheckIfPlayerWon(board, Player))
 				{
 					board.print();
@@ -373,6 +418,7 @@ namespace Tick_Tack_Toe
 			Console.Clear();
 			Console.WriteLine("Achievement get: How did we get here?");
 			Console.ReadKey();
-		}	
+		}
+
 	}
 }
