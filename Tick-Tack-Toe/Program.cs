@@ -6,6 +6,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
+/* Didn't detect the up right direction
+|0|0|0|2|1|0|2|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|
+|1|1|1|1|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|
+|0|2|1|1|2|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|
+|0|1|0|2|2|2|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|
+|1|0|2|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|
+|0|2|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|
+ */
+
+
 namespace Tick_Tack_Toe
 {
 	public static class MyConsole {
@@ -166,7 +176,7 @@ namespace Tick_Tack_Toe
 				Console.ForegroundColor = ConsoleColor.Blue;
 				string input = Console.ReadLine();
 				Console.ResetColor();
-				string[] words = input.Split(',', '.','/');
+				string[] words = input.Split(',', '.', '/');
 				if (words.Length >= 2) // Check if input contains at least two words
 				{
 					int row = Int32.Parse(words[0]) - 1;
@@ -182,7 +192,7 @@ namespace Tick_Tack_Toe
 			}
 		}
 
-		static  List<int> PlacePiece(Board board, int Player)
+		static List<int> PlacePiece(Board board, int Player)
 		{
 			List<int> LastPlayed = new List<int>();
 			for (; ; )
@@ -218,7 +228,7 @@ namespace Tick_Tack_Toe
 				if (board.data[AiOptionX, AiOptionY] == 0)
 				{
 					MyConsole.Color($"Row:{AiOptionX + 1} Col:{AiOptionY + 1}", ConsoleColor.DarkYellow);
-					board.data[AiOptionX, AiOptionY] = Player +1;
+					board.data[AiOptionX, AiOptionY] = Player + 1;
 					//Console.WriteLine($"Y:{AiOptionY}");
 					//Console.WriteLine($"X:{AiOptionX}");
 					return;
@@ -229,10 +239,10 @@ namespace Tick_Tack_Toe
 				}
 			}
 		}
-		static void AiPlayT2(Board board, int Player,List<int> LastPiecePlayed)
+		static void AiPlayT2(Board board, int Player, List<int> LastPiecePlayed)
 		{
-			int LPY = LastPiecePlayed[0] +1;
-			int LPX = LastPiecePlayed[1] +1;
+			int LPY = LastPiecePlayed[0] + 1;
+			int LPX = LastPiecePlayed[1] + 1;
 			//Color($"LPY: {LPY - 1} LPX: {LPX - 1}", ConsoleColor.Blue);
 			//Color($"", ConsoleColor.White);
 			Random rnd = new Random();
@@ -247,7 +257,7 @@ namespace Tick_Tack_Toe
 					{
 						//Color($"X: {AiOptionX} Y: {AiOptionY}", ConsoleColor.DarkYellow);
 						board.data[AiOptionY, AiOptionX] = 2;
-						MyConsole.Color($"Row:{AiOptionY+1} Col:{AiOptionX+1}", ConsoleColor.DarkYellow);
+						MyConsole.Color($"Row:{AiOptionY + 1} Col:{AiOptionX + 1}", ConsoleColor.DarkYellow);
 						break;
 					}
 					//else Color("Try again", ConsoleColor.Red);
@@ -257,6 +267,11 @@ namespace Tick_Tack_Toe
 					Color("Try again", ConsoleColor.Red);
 				}*/
 			}
+		}
+
+		static void AiPlayT3(Board board, int Player)
+		{
+
 		}
 
 		private static Xy GetBoardSize()
@@ -300,6 +315,7 @@ namespace Tick_Tack_Toe
 		{
 			None,
 			Random,
+			Smart,
 			Local
 		}
 
@@ -318,7 +334,8 @@ namespace Tick_Tack_Toe
 			MyConsole.Color("(invalid input will result in the game going singleplayer)", ConsoleColor.DarkYellow);
 			input = Console.ReadLine();
 
-			if (input == "1") {
+			if (input == "1")
+			{
 				return AiType.Random;
 			}
 			
@@ -390,6 +407,9 @@ namespace Tick_Tack_Toe
 								break;
 							case AiType.Local:
 								AiPlayT2(board, Player, LastPiecePlayed);
+								break;
+							case AiType.Smart:
+								AiPlayT3(board, Player);
 								break;
 						}
 
