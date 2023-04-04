@@ -124,21 +124,23 @@ namespace Tick_Tack_Toe
 
 		static bool CheckIfPlayerWonDiagUp(Board board, int Player, int row, int col)
 		{
-			if (row - d < 0) return false;
-			if (col + d > board.width) return false;
-
+			Console.WriteLine($"a row={row}, d={d}");
+			if (row - d + 1 < 0) return false; // the code dosen't pass the first bool
+			Console.WriteLine($"b col={col}, d={d}");
+			if (col + d - 1 > board.width) return false;
+			Console.WriteLine("c");
 			for (int i = 0; i < d; i++)
 			{
 				if (board.data[row - i, col + i] != Player + 1) return false;
 			}
-
+			Console.WriteLine("d");
 			return true;
 		}
 
 		static bool CheckIfPlayerWonDiagDown(Board board, int Player, int row, int col)
 		{
-			if (row + d > board.height) return false;
-			if (col + d > board.width) return false;
+			if (row + d - 1 > board.height) return false;
+			if (col + d - 1 > board.width) return false;
 
 			for (int i = 0; i < d; i++)
 			{
@@ -161,6 +163,7 @@ namespace Tick_Tack_Toe
 						CheckIfPlayerWonDiagDown(board, Player, row, col)
 					)
 					{
+						MyConsole.Color("I was here4", ConsoleColor.Red);
 						return true;
 					}
 				}
@@ -308,6 +311,7 @@ namespace Tick_Tack_Toe
 				MyConsole.Color("Y is too small.", ConsoleColor.Red);
 				MyConsole.Color($"Seting it to {BMin}", ConsoleColor.Red);
 			}
+			Console.WriteLine("X + Y " + Boardx * Boardy);
 			return new Xy(Boardx, Boardy);
 		}
 
@@ -348,11 +352,17 @@ namespace Tick_Tack_Toe
 			//}
 
 		}
+		static void RestartGame()
+		{
 
+		}
 
 		static void Main(string[] args)
 		{
-			Xy boardSize = GetBoardSize();
+			bool Exit = true;
+			if (Exit)
+			{
+				Xy boardSize = GetBoardSize();
 			AiType aiType = GetAiType();
 
 			d = (boardSize.x + boardSize.y) / 2; //or i will ask
@@ -380,63 +390,73 @@ namespace Tick_Tack_Toe
 			//Console.WriteLine((int)x);
 			List<int> LastPiecePlayed = new List<int>();
 			Console.Clear();
-
-			for (int i = 0; ; i++) // inf loop // strange setup of player selection // have to chiainge
-			{
-				int Player = i % 2;
-				//PlacePiece(Boardx, Boardy, Player, board);
-				//Console.WriteLine(Player);
-				board.print();
-				//string comfirm = "";
-				if (aiType == AiType.None)
+				for (int i = 0; ; i++) // inf loop // strange setup of player selection // have to chiainge
 				{
-					PlacePiece(board, Player);
-				}
-				else { 
-					if (Player % 2 == 0) //Player
+					int Player = i % 2;
+					//PlacePiece(Boardx, Boardy, Player, board);
+					//Console.WriteLine(Player);
+					board.print();
+					//string comfirm = "";
+					if (aiType == AiType.None)
 					{
-						LastPiecePlayed = PlacePiece(board, Player);
-						//Console.WriteLine(Player);
+						PlacePiece(board, Player);
 					}
-					else if (Player % 2 == 1) //Ai
-					{
-						switch (aiType)
+					else {
+						if (Player % 2 == 0) //Player
 						{
-							case AiType.Random:
-								AiPlayT1(board, Player);
-								break;
-							case AiType.Local:
-								AiPlayT2(board, Player, LastPiecePlayed);
-								break;
-							case AiType.Smart:
-								AiPlayT3(board, Player);
-								break;
+							LastPiecePlayed = PlacePiece(board, Player);
+							//Console.WriteLine(Player);
 						}
+						else if (Player % 2 == 1) //Ai
+						{
+							switch (aiType)
+							{
+								case AiType.Random:
+									AiPlayT1(board, Player);
+									break;
+								case AiType.Local:
+									AiPlayT2(board, Player, LastPiecePlayed);
+									break;
+								case AiType.Smart:
+									AiPlayT3(board, Player);
+									break;
+							}
 
-						Thread.Sleep(1000);
+							Thread.Sleep(1000);
+						}
 					}
-				}
 
-				if (CheckIfPlayerWon(board, Player))
-				{
-					board.print();
-					MyConsole.Color($"Player:{Player + 1} Won", ConsoleColor.Magenta);
-					Console.ReadLine();
-					break;
+					if (CheckIfPlayerWon(board, Player))
+					{
+						board.print();
+						MyConsole.Color($"Player:{Player + 1} Won", ConsoleColor.Magenta);
+						//Console.ReadLine();
+						break;
+					}
+					if (MaxPlays == i)
+					{
+						board.print();
+						MyConsole.Color("Draw", ConsoleColor.Magenta);
+						//Console.ReadLine();
+						break;
+					}
+					//Color($"i:{i} MaxPlays: {MaxPlays}", ConsoleColor.Gray);
+					//Table(board, Boardx, Boardy);
+					//Console.Clear(); //looks like a good place
 				}
-				if (MaxPlays == i)
+				MyConsole.Color("Do you want to exit? (Y/N)", ConsoleColor.Green);
+				string ShouldYouExit = Console.ReadLine().ToUpper();
+				if (ShouldYouExit != "Y")
 				{
-					board.print();
-					MyConsole.Color("Draw", ConsoleColor.Magenta);
-					Console.ReadLine();
-					break;
+					Exit = false;
+				}else
+				{
+					Exit = true;
+					RestartGame();
 				}
-				//Color($"i:{i} MaxPlays: {MaxPlays}", ConsoleColor.Gray);
-				//Table(board, Boardx, Boardy);
-				//Console.Clear(); //looks like a good place
 			}
 			Console.Clear();
-			Console.WriteLine("Achievement get: How did we get here?");
+			Console.WriteLine("Exiting aplication...");
 			Console.ReadKey();
 		}
 
