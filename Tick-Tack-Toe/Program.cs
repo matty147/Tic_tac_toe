@@ -39,6 +39,7 @@ namespace Tick_Tack_Toe
 		public int width { get; }
 		public int[,] data { get; }
 
+
 		public Board(int width, int height)
 		{
 			this.width = width;
@@ -72,24 +73,29 @@ namespace Tick_Tack_Toe
 			}
 		}
 
-		public void placePiece(int row, int col)
+		public bool isFree(Point place)
 		{
-			// todo
+			return data[place.row, place.col] == 0;
+		}
+
+		public void placePiece(Point place, int player)
+		{
+			data[place.row, place.col] = player + 1;
 		}
 
 		public bool isFull() { return true; }	// todo
 		
 	}
 
-	public class Xy
+	public class Point
 	{
-		public int x{ get; }
-		public int y { get; }
+		public int row { get; }
+		public int col { get; }
 
-		public Xy(int x, int y)
+		public Point(int row, int col)
 		{
-			this.x = x;
-			this.y = y;
+			this.row = row;
+			this.col = col;
 		}
 	}
 
@@ -131,7 +137,11 @@ namespace Tick_Tack_Toe
 			Console.WriteLine("c");
 			for (int i = 0; i < d; i++)
 			{
-				if (board.data[row - i, col + i] != Player + 1) return false;
+				if (i > 1) //must make nicer
+				{
+					return false;
+				}
+				if (board.data[row - i, col + i] != Player + 1) return false;// this index was also outside of the range
 			}
 			Console.WriteLine("d");
 			return true;
@@ -144,8 +154,13 @@ namespace Tick_Tack_Toe
 
 			for (int i = 0; i < d; i++)
 			{
-				if (board.data[row + i, col + i] != Player + 1) return false;
-			}
+				if (i<1) //must make nicer
+				{
+					return false;
+				}
+				Console.WriteLine($"i:{i}");
+			if (board.data[row + i, col + i] != Player + 1) return false; // index whas out of bounds for some reason (3,3)
+			} //Number 2 is the last number that i goes to
 
 			return true;
 		}
@@ -162,6 +177,11 @@ namespace Tick_Tack_Toe
 						CheckIfPlayerWonDiagUp(board, Player, row, col) ||
 						CheckIfPlayerWonDiagDown(board, Player, row, col)
 					)
+					/* this is not a win for some reason i think i broke it when added the i>1 false check
+					|1|2|0|
+					|0|1|0|
+					|2|2|1|
+					 */
 					{
 						MyConsole.Color("I was here4", ConsoleColor.Red);
 						return true;
@@ -172,7 +192,7 @@ namespace Tick_Tack_Toe
 		}
 
 
-		static (int, int) input(int Boardx, int Boardy)
+		static Point input(int Boardx, int Boardy)
 		{
 			MyConsole.Color("Please enter two numbers separated with a comma.", ConsoleColor.Green);
 			for (; ; ) {
@@ -187,7 +207,7 @@ namespace Tick_Tack_Toe
 
 					if (0 <= row && row < Boardy && 0 <= col && col < Boardx)
 					{
-						return (row, col);
+						return new Point(row, col);
 					}
 
 				}
@@ -200,17 +220,15 @@ namespace Tick_Tack_Toe
 			List<int> LastPlayed = new List<int>();
 			for (; ; )
 			{
-				(int, int) place = input(board.width, board.height);
-				int row = place.Item1;
-				int col = place.Item2;
+				Point place = input(board.width, board.height);
 
-				LastPlayed.Add(row);
-				LastPlayed.Add(col);
+				LastPlayed.Add(place.row);
+				LastPlayed.Add(place.col);
 
-				if (board.data[row, col] == 0)
+				if (board.isFree(place))
 				{
-					MyConsole.Color($"Row:{row + 1} Col:{col + 1}", ConsoleColor.Blue);
-					board.data[row, col] = Player + 1;
+					MyConsole.Color($"Row:{place.row + 1} Col:{place.col + 1}", ConsoleColor.Blue);
+					board.placePiece(place, Player);
 					return LastPlayed;
 				}
 				else
@@ -277,7 +295,8 @@ namespace Tick_Tack_Toe
 
 		}
 
-		private static Xy GetBoardSize()
+
+		private static Point GetBoardSize()
 		{
 			MyConsole.Color("Please enter two number for the size of the table (width, height)", ConsoleColor.Green);
 			string input = Console.ReadLine();
@@ -312,7 +331,7 @@ namespace Tick_Tack_Toe
 				MyConsole.Color($"Seting it to {BMin}", ConsoleColor.Red);
 			}
 			Console.WriteLine("X + Y " + Boardx * Boardy);
-			return new Xy(Boardx, Boardy);
+			return new Point(Boardy, Boardx);
 		}
 
 		enum AiType
@@ -362,17 +381,15 @@ namespace Tick_Tack_Toe
 			bool Exit = true;
 			if (Exit)
 			{
-				Xy boardSize = GetBoardSize();
-			AiType aiType = GetAiType();
+				Point boardSize = GetBoardSize();
+				AiType aiType = GetAiType();
 
-			d = (boardSize.x + boardSize.y) / 2; //or i will ask
+			d = (boardSize.col + boardSize.row) / 2; //or i will ask
 
 			d = Math.Max(d, 3);
 			d = Math.Min(d, 5);
 
-			int MaxPlays = boardSize.x * boardSize.y;
-
-
+			int MaxPlays = boardSize.col * boardSize.row - 1;
 			/*if (Ai != "n"|| Ai != "N"|| Ai != "Y" || Ai != "y")
 			{
 				Color("Wrong input", ConsoleColor.Red);
@@ -384,7 +401,7 @@ namespace Tick_Tack_Toe
 			//number will alwayes be positive
 			//Math.Abs();
 
-			Board board = new Board(boardSize.x, boardSize.y);
+			Board board = new Board(boardSize.col, boardSize.row);
 			// Define and initialize board array
 			//char x = 'B';
 			//Console.WriteLine((int)x);
@@ -433,8 +450,8 @@ namespace Tick_Tack_Toe
 						//Console.ReadLine();
 						break;
 					}
-					if (MaxPlays == i)
-					{
+					if (MaxPlays == i) // remove +1
+					{ // should check if ther is a draw
 						board.print();
 						MyConsole.Color("Draw", ConsoleColor.Magenta);
 						//Console.ReadLine();
