@@ -1,20 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
-
-/* Didn't detect the up right direction
-|0|0|0|2|1|0|2|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|
-|1|1|1|1|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|
-|0|2|1|1|2|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|
-|0|1|0|2|2|2|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|
-|1|0|2|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|
-|0|2|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|
- */
-
 
 namespace Tick_Tack_Toe
 {
@@ -130,11 +121,11 @@ namespace Tick_Tack_Toe
 
 		static bool CheckIfPlayerWonDiagUp(Board board, int Player, int row, int col)
 		{
-			Console.WriteLine($"a row={row}, d={d}");
+			//Console.WriteLine($"a row={row}, d={d}");
 			if (row - d + 1 < 0) return false; // the code dosen't pass the first bool
-			Console.WriteLine($"b col={col}, d={d}");
+			//Console.WriteLine($"b col={col}, d={d}");
 			if (col + d - 1 > board.width) return false;
-			Console.WriteLine("c");
+			//Console.WriteLine("c");
 			for (int i = 0; i < d; i++)
 			{
 				if (i > 1) //must make nicer
@@ -143,7 +134,7 @@ namespace Tick_Tack_Toe
 				}
 				if (board.data[row - i, col + i] != Player + 1) return false;// this index was also outside of the range
 			}
-			Console.WriteLine("d");
+			//Console.WriteLine("d");
 			return true;
 		}
 
@@ -158,7 +149,7 @@ namespace Tick_Tack_Toe
 				{
 					return false;
 				}
-				Console.WriteLine($"i:{i}");
+				//Console.WriteLine($"i:{i}");
 			if (board.data[row + i, col + i] != Player + 1) return false; // index whas out of bounds for some reason (3,3)
 			} //Number 2 is the last number that i goes to
 
@@ -371,15 +362,16 @@ namespace Tick_Tack_Toe
 			//}
 
 		}
-		static void RestartGame()
+		static void RestartGame(Board board, int MaxPlayes)
 		{
-
+			Array.Clear(board.data, 0,MaxPlayes -1);
+			Console.Clear();
 		}
 
 		static void Main(string[] args)
 		{
-			bool Exit = true;
-			if (Exit)
+			bool Exit = false;
+			for (;Exit == false;)
 			{
 				Point boardSize = GetBoardSize();
 				AiType aiType = GetAiType();
@@ -463,14 +455,15 @@ namespace Tick_Tack_Toe
 				}
 				MyConsole.Color("Do you want to exit? (Y/N)", ConsoleColor.Green);
 				string ShouldYouExit = Console.ReadLine().ToUpper();
-				if (ShouldYouExit != "Y")
-				{
-					Exit = false;
-				}else
+				if (ShouldYouExit != "N")
 				{
 					Exit = true;
-					RestartGame();
+				}else
+				{
+					Exit = false;
+					RestartGame(board , MaxPlays);
 				}
+				//MyConsole.Color($"You selected: {Exit}", ConsoleColor.DarkMagenta);
 			}
 			Console.Clear();
 			Console.WriteLine("Exiting aplication...");
