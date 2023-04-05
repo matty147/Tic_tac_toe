@@ -295,7 +295,7 @@ namespace Tick_Tack_Toe
 			string[] words = input.Split(',', '.', '/');
 			int Boardx = Int32.Parse(words[1]);
 			int Boardy = Int32.Parse(words[0]);
-			int BMax = 25, BMin = 3;
+			int BMax = 50, BMin = 3;
 			if (Boardx > BMax)
 			{
 				Boardx = BMax;
@@ -375,25 +375,41 @@ namespace Tick_Tack_Toe
 			{
 				Point boardSize = GetBoardSize();
 				AiType aiType = GetAiType();
+				string input = Console.ReadLine();
+				int SizeOfD = 0;
+				Int32.TryParse(input, out SizeOfD);
+				if (SizeOfD != 0) //replace with max and min var in the get boardsize method;
+				{//MUST CHECK IF THE BOARD IS SMALLER THAT SIZEOFD!!!!!!!!!
+					if (SizeOfD < 3)
+					{
+						SizeOfD = 3;
+					}
+					else if (SizeOfD > 50) 
+					{
+						SizeOfD = 50;
+					}
+					d = SizeOfD;
+				}
+				else
+				{
+					d = (boardSize.col + boardSize.row) / 2;
+				}
+				d = Math.Max(d, 3);
+				d = Math.Min(d, 5);
 
-			d = (boardSize.col + boardSize.row) / 2; //or i will ask
+				int MaxPlays = boardSize.col * boardSize.row - 1;
+				/*if (Ai != "n"|| Ai != "N"|| Ai != "Y" || Ai != "y")
+				{
+					Color("Wrong input", ConsoleColor.Red);
+					Color("Seting the Ai to off", ConsoleColor.Red);
+					Ai = "N";
+				}*/
+				//check if a number is a decimal
+				//if (!Decimal.TryParse(words[0], out <output>))
+				//number will alwayes be positive
+				//Math.Abs();
 
-			d = Math.Max(d, 3);
-			d = Math.Min(d, 5);
-
-			int MaxPlays = boardSize.col * boardSize.row - 1;
-			/*if (Ai != "n"|| Ai != "N"|| Ai != "Y" || Ai != "y")
-			{
-				Color("Wrong input", ConsoleColor.Red);
-				Color("Seting the Ai to off", ConsoleColor.Red);
-				Ai = "N";
-			}*/
-			//check if a number is a decimal
-			//if (!Decimal.TryParse(words[0], out <output>))
-			//number will alwayes be positive
-			//Math.Abs();
-
-			Board board = new Board(boardSize.col, boardSize.row);
+				Board board = new Board(boardSize.col, boardSize.row);
 			// Define and initialize board array
 			//char x = 'B';
 			//Console.WriteLine((int)x);
@@ -455,7 +471,7 @@ namespace Tick_Tack_Toe
 				}
 				MyConsole.Color("Do you want to exit? (Y/N)", ConsoleColor.Green);
 				string ShouldYouExit = Console.ReadLine().ToUpper();
-				if (ShouldYouExit != "N")
+				if (ShouldYouExit == "Y")
 				{
 					Exit = true;
 				}else
@@ -463,7 +479,6 @@ namespace Tick_Tack_Toe
 					Exit = false;
 					RestartGame(board , MaxPlays);
 				}
-				//MyConsole.Color($"You selected: {Exit}", ConsoleColor.DarkMagenta);
 			}
 			Console.Clear();
 			Console.WriteLine("Exiting aplication...");
