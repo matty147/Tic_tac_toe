@@ -124,15 +124,11 @@ namespace Tick_Tack_Toe
 			//Console.WriteLine($"a row={row}, d={d}");
 			if (row - d + 1 < 0) return false; // the code dosen't pass the first bool
 			//Console.WriteLine($"b col={col}, d={d}");
-			if (col + d - 1 > board.width) return false;
+			if (col + d - 1 >= board.width) return false;
 			//Console.WriteLine("c");
 			for (int i = 0; i < d; i++)
 			{
-				if (i > 1) //must make nicer
-				{
-					return false;
-				}
-				if (board.data[row - i, col + i] != Player + 1) return false;// this index was also outside of the range
+				if (board.data[row - i, col + i] != Player + 1) return false;
 			}
 			//Console.WriteLine("d");
 			return true;
@@ -140,18 +136,14 @@ namespace Tick_Tack_Toe
 
 		static bool CheckIfPlayerWonDiagDown(Board board, int Player, int row, int col)
 		{
-			if (row + d - 1 > board.height) return false;
-			if (col + d - 1 > board.width) return false;
+			if (row + d - 1 >= board.height) return false;
+			if (col + d - 1 >= board.width) return false;
 
 			for (int i = 0; i < d; i++)
 			{
-				if (i<1) //must make nicer
-				{
-					return false;
-				}
 				//Console.WriteLine($"i:{i}");
-			if (board.data[row + i, col + i] != Player + 1) return false; // index whas out of bounds for some reason (3,3)
-			} //Number 2 is the last number that i goes to
+			if (board.data[row + i, col + i] != Player + 1) return false;
+			}
 
 			return true;
 		}
@@ -375,6 +367,7 @@ namespace Tick_Tack_Toe
 			{
 				Point boardSize = GetBoardSize();
 				AiType aiType = GetAiType();
+				MyConsole.Color("Please select how many X in a row you need to win", ConsoleColor.Green);
 				string input = Console.ReadLine();
 				int SizeOfD = 0;
 				Int32.TryParse(input, out SizeOfD);
