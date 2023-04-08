@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Permissions;
 using System.Text;
 using System.Threading;
@@ -22,7 +23,45 @@ namespace Tick_Tack_Toe
 			Console.Write(Message);
 			Console.ResetColor();
 		}
+
+		public static int getNumber(int min, int max, string prompt = "Enter a number")
+		{
+			MyConsole.Color($"{prompt} ({min}..{max})", ConsoleColor.Green);
+			for (; ; )
+			{
+				int number;
+
+				for (; ; ) {
+					string input = Console.ReadLine();
+					bool valid = Int32.TryParse(input, out number);
+					if (valid)
+					{
+						break;
+					}
+					else
+					{
+						MyConsole.Color("Your input is not an integer number.", ConsoleColor.Red);
+					}
+				}
+
+
+				if (number < min)
+				{
+					MyConsole.Color($"The number should be at least {min}.", ConsoleColor.Red);
+				}
+				else if (number > max)
+				{
+					MyConsole.Color($"The number should be at most {max}.", ConsoleColor.Red);
+				}
+				else
+				{
+					return number;
+				}
+			}
+		}
 	}
+
+
 
 	public class Board
 	{
@@ -38,6 +77,17 @@ namespace Tick_Tack_Toe
 			this.data = new int[height, width];
 		}
 
+		public bool isValid(Point point)
+		{
+			return 
+				0 <= point.row && point.row <= height &&
+				0 <= point.col && point.col <= width;
+		}
+
+		public bool isValid(int row, int col)
+		{
+			return isValid(new Point(row, col));
+		}
 		public void print()
 		{
 			for (int r = 0; r < height; r++)
@@ -121,11 +171,8 @@ namespace Tick_Tack_Toe
 
 		static bool CheckIfPlayerWonDiagUp(Board board, int Player, int row, int col)
 		{
-			//Console.WriteLine($"a row={row}, d={d}");
-			if (row - d + 1 < 0) return false; // the code dosen't pass the first bool
-			//Console.WriteLine($"b col={col}, d={d}");
-			if (col + d - 1 >= board.width) return false;
-			//Console.WriteLine("c");
+			if (!board.isValid(row - d + 1, col + d - 1)) return false;
+ 
 			for (int i = 0; i < d; i++)
 			{
 				if (board.data[row - i, col + i] != Player + 1) return false;
@@ -136,8 +183,7 @@ namespace Tick_Tack_Toe
 
 		static bool CheckIfPlayerWonDiagDown(Board board, int Player, int row, int col)
 		{
-			if (row + d - 1 >= board.height) return false;
-			if (col + d - 1 >= board.width) return false;
+			if (!board.isValid(row + d - 1, col + d - 1)) return false;
 
 			for (int i = 0; i < d; i++)
 			{
@@ -160,11 +206,6 @@ namespace Tick_Tack_Toe
 						CheckIfPlayerWonDiagUp(board, Player, row, col) ||
 						CheckIfPlayerWonDiagDown(board, Player, row, col)
 					)
-					/* this is not a win for some reason i think i broke it when added the i>1 false check
-					|1|2|0|
-					|0|1|0|
-					|2|2|1|
-					 */
 					{
 						MyConsole.Color("I was here4", ConsoleColor.Red);
 						return true;
@@ -360,6 +401,17 @@ namespace Tick_Tack_Toe
 			Console.Clear();
 		}
 
+		static int FitInto(int value, int min, int max)
+		{
+			int tmp = Math.Max(value, min);
+			return Math.Min(tmp, max);
+		}
+
+
+
+
+
+
 		static void Main(string[] args)
 		{
 			bool Exit = false;
@@ -367,28 +419,18 @@ namespace Tick_Tack_Toe
 			{
 				Point boardSize = GetBoardSize();
 				AiType aiType = GetAiType();
-				MyConsole.Color("Please select how many X in a row you need to win", ConsoleColor.Green);
-				string input = Console.ReadLine();
-				int SizeOfD = 0;
-				Int32.TryParse(input, out SizeOfD);
-				if (SizeOfD != 0) //replace with max and min var in the get boardsize method;
-				{//MUST CHECK IF THE BOARD IS SMALLER THAT SIZEOFD!!!!!!!!!
-					if (SizeOfD < 3)
-					{
-						SizeOfD = 3;
-					}
-					else if (SizeOfD > 50) 
-					{
-						SizeOfD = 50;
-					}
-					d = SizeOfD;
+
+				int maxD = Math.Max(boardSize.row, boardSize.col);
+				if (3 < maxD)
+				{
+					d = MyConsole.getNumber(3, maxD, "Please enter how many X's next to each other are needed to win");
 				}
 				else
 				{
-					d = (boardSize.col + boardSize.row) / 2;
+					d = 3;
 				}
-				d = Math.Max(d, 3);
-				d = Math.Min(d, 5);
+
+				//Int32.TryParse(input, out SizeOfD);
 
 				int MaxPlays = boardSize.col * boardSize.row - 1;
 				/*if (Ai != "n"|| Ai != "N"|| Ai != "Y" || Ai != "y")
