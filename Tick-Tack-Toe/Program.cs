@@ -44,7 +44,6 @@ namespace Tick_Tack_Toe
 					}
 				}
 
-
 				if (number < min)
 				{
 					MyConsole.Color($"The number should be at least {min}.", ConsoleColor.Red);
@@ -80,8 +79,8 @@ namespace Tick_Tack_Toe
 		public bool isValid(Point point)
 		{
 			return 
-				0 <= point.row && point.row <= height &&
-				0 <= point.col && point.col <= width;
+				0 <= point.row && point.row < height &&
+				0 <= point.col && point.col < width;
 		}
 
 		public bool isValid(int row, int col)
@@ -183,12 +182,12 @@ namespace Tick_Tack_Toe
 
 		static bool CheckIfPlayerWonDiagDown(Board board, int Player, int row, int col)
 		{
-			if (!board.isValid(row + d - 1, col + d - 1)) return false;
+			if (!board.isValid(row + d - 1, col + d - 1)) return false; 
 
 			for (int i = 0; i < d; i++)
 			{
 				//Console.WriteLine($"i:{i}");
-			if (board.data[row + i, col + i] != Player + 1) return false;
+			if (board.data[row + i, col + i] != Player + 1) return false; 
 			}
 
 			return true;
@@ -421,6 +420,7 @@ namespace Tick_Tack_Toe
 				AiType aiType = GetAiType();
 
 				int maxD = Math.Max(boardSize.row, boardSize.col);
+				MyConsole.Color($"MaxD: {maxD}", ConsoleColor.Red);
 				if (3 < maxD)
 				{
 					d = MyConsole.getNumber(3, maxD, "Please enter how many X's next to each other are needed to win");
@@ -431,7 +431,6 @@ namespace Tick_Tack_Toe
 				}
 
 				//Int32.TryParse(input, out SizeOfD);
-
 				int MaxPlays = boardSize.col * boardSize.row - 1;
 				/*if (Ai != "n"|| Ai != "N"|| Ai != "Y" || Ai != "y")
 				{
@@ -517,7 +516,7 @@ namespace Tick_Tack_Toe
 			}
 			Console.Clear();
 			Console.WriteLine("Exiting aplication...");
-			Console.ReadKey();
+			Console.ReadKey(); //can make it wait a second or two insted of waiting for the player input
 		}
 
 	}
