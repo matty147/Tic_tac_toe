@@ -91,14 +91,12 @@ namespace Tick_Tack_Toe
 		{
 			for (int r = 0; r < height; r++)
 			{
-				//ColorNL($"{r + 1}: ", ConsoleColor.Red); look strange when with biger number than 9
 				for (int c = 0; c < width; c++)
 				{
 					MyConsole.ColorNL("|", ConsoleColor.White);
 					if (data[r, c] == 1)
 					{
 						MyConsole.ColorNL($"{data[r, c]}", ConsoleColor.Blue);
-						//Console.Write($"|{board[r, c]}");
 					}
 					else if (data[r, c] == 2)
 					{
@@ -231,7 +229,7 @@ namespace Tick_Tack_Toe
 					Console.ResetColor();
 				}
 				string[] words = input.Split(',', '.', '/');
-					if (words.Length >= 2) // Check if input contains at least two words
+					if (words.Length >= 2)
 					{
 						int row = Int32.Parse(words[0]) - 1;
 						int col = Int32.Parse(words[1]) - 1;
@@ -288,8 +286,6 @@ namespace Tick_Tack_Toe
 				{
 					MyConsole.Color($"Row:{AiOptionX + 1} Col:{AiOptionY + 1}", ConsoleColor.DarkYellow);
 					board.data[AiOptionX, AiOptionY] = Player + 1;
-					//Console.WriteLine($"Y:{AiOptionY}");
-					//Console.WriteLine($"X:{AiOptionX}");
 					return;
 				}
 				else
@@ -302,8 +298,6 @@ namespace Tick_Tack_Toe
 		{
 			int LPY = LastPiecePlayed[0] + 1;
 			int LPX = LastPiecePlayed[1] + 1;
-			//Color($"LPY: {LPY - 1} LPX: {LPX - 1}", ConsoleColor.Blue);
-			//Color($"", ConsoleColor.White);
 			Random rnd = new Random();
 			for (; ; )
 			{
@@ -314,17 +308,11 @@ namespace Tick_Tack_Toe
 				{
 					if (board.data[AiOptionY, AiOptionX] == 0)
 					{
-						//Color($"X: {AiOptionX} Y: {AiOptionY}", ConsoleColor.DarkYellow);
 						board.data[AiOptionY, AiOptionX] = 2;
 						MyConsole.Color($"Row:{AiOptionY + 1} Col:{AiOptionX + 1}", ConsoleColor.DarkYellow);
 						break;
 					}
-					//else Color("Try again", ConsoleColor.Red);
 				}
-				/*else
-				{
-					Color("Try again", ConsoleColor.Red);
-				}*/
 			}
 		}
 
@@ -352,7 +340,7 @@ namespace Tick_Tack_Toe
 						bool ValidY = Int32.TryParse(words[1], out Boardy);
 						if (ValidX && ValidY)
 						{
-							Boardx = Int32.Parse(words[1]); //should check if a board is the right size
+							Boardx = Int32.Parse(words[1]);
 							Boardy = Int32.Parse(words[0]);
 							break;
 						}
@@ -418,13 +406,6 @@ namespace Tick_Tack_Toe
 			}
 			
 			return AiType.Local;
-
-			//{
-			//	MyConsole.Color("Wrong input", ConsoleColor.Red);
-			//	Console.ReadKey();
-			//	break;
-			//}
-
 		}
 		static void RestartGame(Board board, int MaxPlayes)
 		{
@@ -455,32 +436,18 @@ namespace Tick_Tack_Toe
 					d = 3;
 				}
 				AiType aiType = GetAiType();
-				//Int32.TryParse(input, out SizeOfD);
 				int MaxPlays = boardSize.col * boardSize.row - 1;
-				/*if (Ai != "n"|| Ai != "N"|| Ai != "Y" || Ai != "y")
-				{
-					Color("Wrong input", ConsoleColor.Red);
-					Color("Seting the Ai to off", ConsoleColor.Red);
-					Ai = "N";
-				}*/
 				//check if a number is a decimal
 				//if (!Decimal.TryParse(words[0], out <output>))
 				//number will alwayes be positive
 				//Math.Abs();
-
 				Board board = new Board(boardSize.col, boardSize.row);
-			// Define and initialize board array
-			//char x = 'B';
-			//Console.WriteLine((int)x);
 			List<int> LastPiecePlayed = new List<int>();
 			Console.Clear();
-				for (int i = 0; ; i++) // inf loop // strange setup of player selection // have to chiainge
+				for (int i = 0; ; i++) // inf loop // strange setup of player selection // have to change
 				{
 					int Player = i % 2;
-					//PlacePiece(Boardx, Boardy, Player, board);
-					//Console.WriteLine(Player);
 					board.print();
-					//string comfirm = "";
 					if (aiType == AiType.None)
 					{
 						PlacePiece(board, Player);
@@ -489,7 +456,6 @@ namespace Tick_Tack_Toe
 						if (Player % 2 == 0) //Player
 						{
 							LastPiecePlayed = PlacePiece(board, Player);
-							//Console.WriteLine(Player);
 						}
 						else if (Player % 2 == 1) //Ai
 						{
@@ -514,19 +480,14 @@ namespace Tick_Tack_Toe
 					{
 						board.print();
 						MyConsole.Color($"Player{Player + 1} Won", ConsoleColor.Magenta);
-						//Console.ReadLine();
 						break;
 					}
-					if (MaxPlays == i) // remove +1
-					{ // should check if ther is a draw
+					if (MaxPlays == i)
+					{
 						board.print();
 						MyConsole.Color("Draw", ConsoleColor.Magenta);
-						//Console.ReadLine();
 						break;
 					}
-					//Color($"i:{i} MaxPlays: {MaxPlays}", ConsoleColor.Gray);
-					//Table(board, Boardx, Boardy);
-					//Console.Clear(); //looks like a good place
 				}
 				MyConsole.Color("Do you want to exit? (Y/N)", ConsoleColor.Green);
 				string ShouldYouExit = Console.ReadLine().ToUpper();
