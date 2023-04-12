@@ -209,47 +209,48 @@ namespace Tick_Tack_Toe
 			return false;
 		}
 
+		static void check(bool test, string msg)
+		{
+			if (!test) throw new Exception(msg);
+		}
 
-		static Point input(int Boardx, int Boardy,int TypeOfPlayer)
+		static Point input(int minx, int miny, int maxx, int maxy, ConsoleColor color = ConsoleColor.White)
 		{
 			MyConsole.Color("Please enter two numbers separated with a comma.", ConsoleColor.Green);
 			//I could write the player who should be playing but idk about that
 			for (; ; ) {
 				string input = "";
-				if (TypeOfPlayer == 0)
-				{
-					Console.ForegroundColor = ConsoleColor.Blue;
-					input = Console.ReadLine();
-					Console.ResetColor();
-				}
-				else if (TypeOfPlayer == 1)
-				{
-					Console.ForegroundColor = ConsoleColor.DarkYellow;
-					input = Console.ReadLine();
-					Console.ResetColor();
-				}
+				Console.ForegroundColor = color;
+				input = Console.ReadLine();
+				Console.ResetColor();
 				string[] words = input.Split(',', '.', '/');
-					if (words.Length >= 2)
-					{
-						int col = 0, row = 0;
-						row = Int32.Parse(words[0]) - 1; //can crash the program if invalid input is 
-						col = Int32.Parse(words[1]) - 1;
-						if (0 <= row && row < Boardy && 0 <= col && col < Boardx)
-						{
-							return new Point(row, col);
-						}
+				int x, y;
+				try
+				{
+					check(words.Length >= 2, "At least two numbers required"); // if (words == "") {//input is for some reason 1(2)}
+					bool ValidX = Int32.TryParse(words[0], out x);
+					bool ValidY = Int32.TryParse(words[1], out y);
+					check(ValidX, "First item is not a number");
+					check(ValidX, "Second item is not a number");
+					check(minx <= x && x < maxx, $"The fist number must be in [{minx + 1}, {maxx})");
+					check(miny <= y && y < maxy, $"The fist number must be in [{miny + 1}, {maxy})");
 
-					}
-				MyConsole.Color("Invalid input", ConsoleColor.Red);
+					return new Point(y, x);
+				}
+				catch(Exception e)
+				{
+					MyConsole.Color($"Invalid input {e.Message}", ConsoleColor.Red);
+				}
 			}
 		}
+
 		static List<int> PlacePiece(Board board, int Player)
 		{
 			int TypeOfPlayer = Player % 2; //Type Of Player that should be playing
 			List<int> LastPlayed = new List<int>();
 			for (; ; )
 			{
-				Point place = input(board.width, board.height,TypeOfPlayer);
+				Point place = input(0, 0, board.width, board.height, TypeOfPlayer == 0 ? ConsoleColor.Blue : ConsoleColor.DarkYellow);
 
 				LastPlayed.Add(place.row);
 				LastPlayed.Add(place.col);
@@ -321,36 +322,47 @@ namespace Tick_Tack_Toe
 
 		}
 
-
+		static bool CanPlay(string[] Words,int Boardx,int Boardy,int BMax,int BMin)
+		{
+			if (Words.Length >= 2)
+			{
+				if (Words[0] != "" && Words[1] != "")
+				{
+					bool ValidX = Int32.TryParse(Words[0], out Boardx);
+					bool ValidY = Int32.TryParse(Words[1], out Boardy);
+					if (ValidX && ValidY)
+					{
+						if (Boardy >= BMin && Boardy <= BMax && Boardx >= BMin && Boardx <= BMax) //make a method for this crap
+						{
+							return true;
+						}
+						else MyConsole.Color($"Invalid input. Please enter values from {BMin} to {BMax}.", ConsoleColor.Red);
+					}
+					else MyConsole.Color("Invalid input. X and Y coordinates must be numeric values.", ConsoleColor.Red);
+				}
+				else MyConsole.Color("Invalid input. X and Y coordinates cannot be empty.", ConsoleColor.Red);
+			}
+			else MyConsole.Color("Invalid input. Please enter two values separated by a space, dot or a backslash.", ConsoleColor.Red);
+			return false;
+		}
 		private static Point GetBoardSize()
 		{
-			int Boardx = 0, Boardy = 0;
-			int BMax = 50, BMin = 3;
-			for (; ; )
-			{
-				MyConsole.Color("Please enter two number for the size of the table (width, height)", ConsoleColor.Green);
+			MyConsole.Color("Please enter two number for the size of the table (width, height)", ConsoleColor.Green);
+				int Boardx = 0, Boardy = 0;
+				int BMax = 50, BMin = 3;
 				string input = Console.ReadLine();
 				string PLastPlace = input;
-				string[] words = input.Split(',', '.', '/');
-				if (words.Length >= 2)
-				{
-					if (words[0] != "" && words[1] != "")
-					{
-						bool ValidX = Int32.TryParse(words[0], out Boardx);
-						bool ValidY = Int32.TryParse(words[1], out Boardy);
-						if (ValidX && ValidY)
-						{
-							if (Boardy >= BMin && Boardy <= BMax && Boardx >= BMin && Boardx <= BMax) //make a method for this crap
-							{
-								Boardx = Int32.Parse(words[1]);
-								Boardy = Int32.Parse(words[0]);
-								break;
-							} else MyConsole.Color($"Invalid input. Please enter values from {BMin} to {BMax}.", ConsoleColor.Red);
-						} else MyConsole.Color("Invalid input. X and Y coordinates must be numeric values.", ConsoleColor.Red);
-					} else MyConsole.Color("Invalid input. X and Y coordinates cannot be empty.", ConsoleColor.Red);
-				} else MyConsole.Color("Invalid input. Please enter two values separated by a space, dot or a backslash.", ConsoleColor.Red);
+				string[] Words = input.Split(',', '.', '/');
+			if (CanPlay(Words, Boardx, Boardy, BMax, BMin)) // if number are 0 and then changed it think it is good but the board will not exist :/
+			{
+				Boardx = Int32.Parse(Words[1]);
+				Boardy = Int32.Parse(Words[0]);
+				return new Point(Boardy, Boardx);
 			}
-			return new Point(Boardy, Boardx);
+			else
+			{
+				return GetBoardSize();
+			}
 		}
 
 		enum AiType
