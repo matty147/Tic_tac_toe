@@ -176,7 +176,6 @@ namespace Tick_Tack_Toe
 			{
 				if (board.data[row - i, col + i] != Player + 1) return false;
 			}
-			//Console.WriteLine("d");
 			return true;
 		}
 
@@ -186,7 +185,6 @@ namespace Tick_Tack_Toe
 
 			for (int i = 0; i < d; i++)
 			{
-				//Console.WriteLine($"i:{i}");
 			if (board.data[row + i, col + i] != Player + 1) return false; 
 			}
 
@@ -206,7 +204,6 @@ namespace Tick_Tack_Toe
 						CheckIfPlayerWonDiagDown(board, Player, row, col)
 					)
 					{
-						MyConsole.Color("I was here4", ConsoleColor.Red);
 						return true;
 					}
 				}
@@ -215,42 +212,60 @@ namespace Tick_Tack_Toe
 		}
 
 
-		static Point input(int Boardx, int Boardy)
+		static Point input(int Boardx, int Boardy,int TypeOfPlayer)
 		{
 			MyConsole.Color("Please enter two numbers separated with a comma.", ConsoleColor.Green);
+			//I could write the player who should be playing but idk about that
 			for (; ; ) {
-				Console.ForegroundColor = ConsoleColor.Blue;
-				string input = Console.ReadLine();
-				Console.ResetColor();
-				string[] words = input.Split(',', '.', '/');
-				if (words.Length >= 2) // Check if input contains at least two words
+				string input = "";
+				if (TypeOfPlayer == 0)
 				{
-					int row = Int32.Parse(words[0]) - 1;
-					int col = Int32.Parse(words[1]) - 1;
-
-					if (0 <= row && row < Boardy && 0 <= col && col < Boardx)
-					{
-						return new Point(row, col);
-					}
-
+					Console.ForegroundColor = ConsoleColor.Blue;
+					input = Console.ReadLine();
+					Console.ResetColor();
 				}
+				else if (TypeOfPlayer == 1)
+				{
+					Console.ForegroundColor = ConsoleColor.DarkYellow;
+					input = Console.ReadLine();
+					Console.ResetColor();
+				}
+				string[] words = input.Split(',', '.', '/');
+					if (words.Length >= 2) // Check if input contains at least two words
+					{
+						int row = Int32.Parse(words[0]) - 1;
+						int col = Int32.Parse(words[1]) - 1;
+
+						if (0 <= row && row < Boardy && 0 <= col && col < Boardx)
+						{
+							return new Point(row, col);
+						}
+
+					}
 				MyConsole.Color("Invalid input", ConsoleColor.Red);
 			}
 		}
-
 		static List<int> PlacePiece(Board board, int Player)
 		{
+			int TypeOfPlayer = Player % 2; //Type Of Player that should be playing
 			List<int> LastPlayed = new List<int>();
 			for (; ; )
 			{
-				Point place = input(board.width, board.height);
+				Point place = input(board.width, board.height,TypeOfPlayer);
 
 				LastPlayed.Add(place.row);
 				LastPlayed.Add(place.col);
 
 				if (board.isFree(place))
 				{
-					MyConsole.Color($"Row:{place.row + 1} Col:{place.col + 1}", ConsoleColor.Blue);
+					if (TypeOfPlayer == 0)
+					{
+						MyConsole.Color($"Row:{place.row + 1} Col:{place.col + 1}", ConsoleColor.Blue);
+					}else if (TypeOfPlayer == 1)
+					{
+						MyConsole.Color($"Row:{place.row + 1} Col:{place.col + 1}", ConsoleColor.DarkYellow);
+					}
+					
 					board.placePiece(place, Player);
 					return LastPlayed;
 				}
@@ -321,14 +336,32 @@ namespace Tick_Tack_Toe
 
 		private static Point GetBoardSize()
 		{
-			MyConsole.Color("Please enter two number for the size of the table (width, height)", ConsoleColor.Green);
-			string input = Console.ReadLine();
-			string PLastPlace = input;
-			string[] words = input.Split(',', '.', '/');
-			int Boardx = Int32.Parse(words[1]);
-			int Boardy = Int32.Parse(words[0]);
+			int Boardx = 0;
+			int Boardy = 0;
+			for (; ; )
+			{
+				MyConsole.Color("Please enter two number for the size of the table (width, height)", ConsoleColor.Green);
+				string input = Console.ReadLine();
+				string PLastPlace = input;
+				string[] words = input.Split(',', '.', '/');
+				if (words.Length >= 2)
+				{
+					if (words[0] != "" && words[1] != "")
+					{
+						bool ValidX = Int32.TryParse(words[0], out Boardx);
+						bool ValidY = Int32.TryParse(words[1], out Boardy);
+						if (ValidX && ValidY)
+						{
+							Boardx = Int32.Parse(words[1]); //should check if a board is the right size
+							Boardy = Int32.Parse(words[0]);
+							break;
+						}
+					}
+				}
+				MyConsole.Color("Invalid input", ConsoleColor.Red);
+			}
 			int BMax = 50, BMin = 3;
-			if (Boardx > BMax)
+			if (Boardx > BMax) //maybey make it not chose for you but make it ask again until a valid answer
 			{
 				Boardx = BMax;
 
@@ -353,7 +386,6 @@ namespace Tick_Tack_Toe
 				MyConsole.Color("Y is too small.", ConsoleColor.Red);
 				MyConsole.Color($"Seting it to {BMin}", ConsoleColor.Red);
 			}
-			Console.WriteLine("X + Y " + Boardx * Boardy);
 			return new Point(Boardy, Boardx);
 		}
 
@@ -406,21 +438,14 @@ namespace Tick_Tack_Toe
 			return Math.Min(tmp, max);
 		}
 
-
-
-
-
-
 		static void Main(string[] args)
 		{
 			bool Exit = false;
 			for (;Exit == false;)
 			{
 				Point boardSize = GetBoardSize();
-				AiType aiType = GetAiType();
 
 				int maxD = Math.Max(boardSize.row, boardSize.col);
-				MyConsole.Color($"MaxD: {maxD}", ConsoleColor.Red);
 				if (3 < maxD)
 				{
 					d = MyConsole.getNumber(3, maxD, "Please enter how many X's next to each other are needed to win");
@@ -429,7 +454,7 @@ namespace Tick_Tack_Toe
 				{
 					d = 3;
 				}
-
+				AiType aiType = GetAiType();
 				//Int32.TryParse(input, out SizeOfD);
 				int MaxPlays = boardSize.col * boardSize.row - 1;
 				/*if (Ai != "n"|| Ai != "N"|| Ai != "Y" || Ai != "y")
@@ -488,7 +513,7 @@ namespace Tick_Tack_Toe
 					if (CheckIfPlayerWon(board, Player))
 					{
 						board.print();
-						MyConsole.Color($"Player:{Player + 1} Won", ConsoleColor.Magenta);
+						MyConsole.Color($"Player{Player + 1} Won", ConsoleColor.Magenta);
 						//Console.ReadLine();
 						break;
 					}
