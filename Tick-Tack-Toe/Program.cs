@@ -47,7 +47,7 @@ namespace Tick_Tack_Toe
 				if (number < min)
 				{
 					MyConsole.Color($"The number should be at least {min}.", ConsoleColor.Red);
-				}
+				}	
 				else if (number > max)
 				{
 					MyConsole.Color($"The number should be at most {max}.", ConsoleColor.Red);
@@ -231,9 +231,9 @@ namespace Tick_Tack_Toe
 				string[] words = input.Split(',', '.', '/');
 					if (words.Length >= 2)
 					{
-						int row = Int32.Parse(words[0]) - 1;
-						int col = Int32.Parse(words[1]) - 1;
-
+						int col = 0, row = 0;
+						row = Int32.Parse(words[0]) - 1; //can crash the program if invalid input is 
+						col = Int32.Parse(words[1]) - 1;
 						if (0 <= row && row < Boardy && 0 <= col && col < Boardx)
 						{
 							return new Point(row, col);
@@ -324,8 +324,8 @@ namespace Tick_Tack_Toe
 
 		private static Point GetBoardSize()
 		{
-			int Boardx = 0;
-			int Boardy = 0;
+			int Boardx = 0, Boardy = 0;
+			int BMax = 50, BMin = 3;
 			for (; ; )
 			{
 				MyConsole.Color("Please enter two number for the size of the table (width, height)", ConsoleColor.Green);
@@ -340,39 +340,15 @@ namespace Tick_Tack_Toe
 						bool ValidY = Int32.TryParse(words[1], out Boardy);
 						if (ValidX && ValidY)
 						{
-							Boardx = Int32.Parse(words[1]);
-							Boardy = Int32.Parse(words[0]);
-							break;
-						}
-					}
-				}
-				MyConsole.Color("Invalid input", ConsoleColor.Red);
-			}
-			int BMax = 50, BMin = 3;
-			if (Boardx > BMax) //maybey make it not chose for you but make it ask again until a valid answer
-			{
-				Boardx = BMax;
-
-				MyConsole.Color("X is too big.", ConsoleColor.Red);
-				MyConsole.Color($"Seting it to {BMax}", ConsoleColor.Red);
-			}
-			if (Boardy > BMax)
-			{
-				Boardy = BMax;
-				MyConsole.Color("Y is too big.", ConsoleColor.Red);
-				MyConsole.Color($"Seting it to {BMax}", ConsoleColor.Red);
-			}
-			if (Boardx < BMin)
-			{
-				Boardx = BMin;
-				MyConsole.Color("X is too small.", ConsoleColor.Red);
-				MyConsole.Color($"Seting it to {BMin}", ConsoleColor.Red);
-			}
-			if (Boardy < BMin)
-			{
-				Boardy = BMin;
-				MyConsole.Color("Y is too small.", ConsoleColor.Red);
-				MyConsole.Color($"Seting it to {BMin}", ConsoleColor.Red);
+							if (Boardy >= BMin && Boardy <= BMax && Boardx >= BMin && Boardx <= BMax) //make a method for this crap
+							{
+								Boardx = Int32.Parse(words[1]);
+								Boardy = Int32.Parse(words[0]);
+								break;
+							} else MyConsole.Color($"Invalid input. Please enter values from {BMin} to {BMax}.", ConsoleColor.Red);
+						} else MyConsole.Color("Invalid input. X and Y coordinates must be numeric values.", ConsoleColor.Red);
+					} else MyConsole.Color("Invalid input. X and Y coordinates cannot be empty.", ConsoleColor.Red);
+				} else MyConsole.Color("Invalid input. Please enter two values separated by a space, dot or a backslash.", ConsoleColor.Red);
 			}
 			return new Point(Boardy, Boardx);
 		}
@@ -502,7 +478,8 @@ namespace Tick_Tack_Toe
 			}
 			Console.Clear();
 			Console.WriteLine("Exiting aplication...");
-			Console.ReadKey(); //can make it wait a second or two insted of waiting for the player input
+			Thread.Sleep(500); // .5 seconds
+			//Console.ReadKey(); //can make it wait a second or two insted of waiting for the player input
 		}
 
 	}
