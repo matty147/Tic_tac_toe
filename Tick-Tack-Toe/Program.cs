@@ -231,11 +231,12 @@ namespace Tick_Tack_Toe
 					check(words[0] != "" && words[1] != "", "Input must cointain something");
 					bool ValidX = Int32.TryParse(words[0], out x);
 					bool ValidY = Int32.TryParse(words[1], out y);
+					x--; y--; //this hase to be there bc the player is inputing 1 and the board is starts with a 0 not a 1
 					check(ValidX, "First item is not a number");
 					check(ValidX, "Second item is not a number");
 					check(minx <= x && x < maxx, $"The fist number must be in [{minx + 1}, {maxx})");
 					check(miny <= y && y < maxy, $"The fist number must be in [{miny + 1}, {maxy})");
-					return new Point(y, x);
+					return new Point(x, y);
 				}
 				catch(Exception e)
 				{
