@@ -221,25 +221,25 @@ namespace Tick_Tack_Toe
 			for (; ; ) {
 				string input = "";
 				Console.ForegroundColor = color;
-				input = Console.ReadLine();
+				input = Console.ReadLine();//for some reason the input take 2.2 as 3.3
 				Console.ResetColor();
 				string[] words = input.Split(',', '.', '/');
 				int x, y;
 				try
 				{
 					check(words.Length >= 2, "At least two numbers required"); // if (words == "") {//input is for some reason 1(2)}
+					check(words[0] != "" && words[1] != "", "Input must cointain something");
 					bool ValidX = Int32.TryParse(words[0], out x);
 					bool ValidY = Int32.TryParse(words[1], out y);
 					check(ValidX, "First item is not a number");
 					check(ValidX, "Second item is not a number");
 					check(minx <= x && x < maxx, $"The fist number must be in [{minx + 1}, {maxx})");
 					check(miny <= y && y < maxy, $"The fist number must be in [{miny + 1}, {maxy})");
-
 					return new Point(y, x);
 				}
 				catch(Exception e)
 				{
-					MyConsole.Color($"Invalid input {e.Message}", ConsoleColor.Red);
+					MyConsole.Color($"Invalid input, {e.Message}", ConsoleColor.Red);
 				}
 			}
 		}
