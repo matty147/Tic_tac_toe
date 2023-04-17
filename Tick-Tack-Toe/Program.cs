@@ -214,13 +214,15 @@ namespace Tick_Tack_Toe
 			if (!test) throw new Exception(msg);
 		}
 
-		static Point input(int minx, int miny, int maxx, int maxy, ConsoleColor color = ConsoleColor.White)
+		static Point input(int minx, int miny, int maxx, int maxy, 
+			String prompt="Please enter two numbers separated with a comma.",
+			ConsoleColor color = ConsoleColor.White)
 		{
-			MyConsole.Color("Please enter two numbers separated with a comma.", ConsoleColor.Green);
+			MyConsole.Color(prompt, ConsoleColor.Green);
+			Console.ForegroundColor = color;
 			//I could write the player who should be playing but idk about that
 			for (; ; ) {
 				string input = "";
-				Console.ForegroundColor = color;
 				input = Console.ReadLine();//for some reason the input take 2.2 as 3.3
 				Console.ResetColor();
 				string[] words = input.Split(',', '.', '/');
@@ -231,11 +233,11 @@ namespace Tick_Tack_Toe
 					check(words[0] != "" && words[1] != "", "Input must cointain something");
 					bool ValidX = Int32.TryParse(words[0], out x);
 					bool ValidY = Int32.TryParse(words[1], out y);
-					x--; y--; //this hase to be there bc the player is inputing 1 and the board is starts with a 0 not a 1
 					check(ValidX, "First item is not a number");
 					check(ValidX, "Second item is not a number");
-					check(minx <= x && x < maxx, $"The fist number must be in [{minx + 1}, {maxx})");
-					check(miny <= y && y < maxy, $"The fist number must be in [{miny + 1}, {maxy})");
+					check(minx <= x && x <= maxx, $"The fist number must be in [{minx}, {maxx}]");
+					check(miny <= y && y <= maxy, $"The fist number must be in [{miny}, {maxy}]");
+				
 					return new Point(x, y);
 				}
 				catch(Exception e)
@@ -251,7 +253,8 @@ namespace Tick_Tack_Toe
 			List<int> LastPlayed = new List<int>();
 			for (; ; )
 			{
-				Point place = input(0, 0, board.width, board.height, TypeOfPlayer == 0 ? ConsoleColor.Blue : ConsoleColor.DarkYellow);
+				Point place = input(1, 1, board.width, board.height, color: TypeOfPlayer == 0 ? ConsoleColor.Blue : ConsoleColor.DarkYellow);
+				place = new Point(row: place.row - 1, col: place.col - 1);
 
 				LastPlayed.Add(place.row);
 				LastPlayed.Add(place.col);
@@ -384,11 +387,8 @@ namespace Tick_Tack_Toe
 			{
 				return AiType.None;
 			}
-
 			MyConsole.Color("Please enter the type of the bot (1/2/3)", ConsoleColor.Green);
-			MyConsole.Color("(invalid input will result in the game going singleplayer)", ConsoleColor.DarkYellow);
 			input = Console.ReadLine();
-
 			if (input == "1")
 			{
 				return AiType.Random;
@@ -407,13 +407,26 @@ namespace Tick_Tack_Toe
 			int tmp = Math.Max(value, min);
 			return Math.Min(tmp, max);
 		}
-
 		static void Main(string[] args)
 		{
+			//will make this a option to play with
+			//Console.WriteLine("  | 1 | 2 | 3 |");
+			//Console.WriteLine("──┼───┼───┼───┼──");
+			//Console.WriteLine("1 | X │ O │ X │");
+			//Console.WriteLine("──┼───┼───┼───┼──");
+			//Console.WriteLine("2 | X │ O │ O │");
+			//Console.WriteLine("──┼───┼───┼───┼──");
+			//Console.WriteLine("3 | O │ X │ X │");
+			//Console.WriteLine("──┼───┼───┼───┼──");
+			//Console.WriteLine("  |   |   |   |");
 			bool Exit = false;
 			for (;Exit == false;)
 			{
-				Point boardSize = GetBoardSize();
+				//Point boardSize = GetBoardSize();
+				Point boardSize = input(3, 3, 50, 50, 
+					"Please enter two number for the size of the board (width, height)"
+				) ;
+
 
 				int maxD = Math.Max(boardSize.row, boardSize.col);
 				if (3 < maxD)
@@ -426,14 +439,10 @@ namespace Tick_Tack_Toe
 				}
 				AiType aiType = GetAiType();
 				int MaxPlays = boardSize.col * boardSize.row - 1;
-				//check if a number is a decimal
-				//if (!Decimal.TryParse(words[0], out <output>))
-				//number will alwayes be positive
-				//Math.Abs();
 				Board board = new Board(boardSize.col, boardSize.row);
 			List<int> LastPiecePlayed = new List<int>();
 			Console.Clear();
-				for (int i = 0; ; i++) // inf loop // strange setup of player selection // have to change
+				for (int i = 0; ; i++) // inf loop
 				{
 					int Player = i % 2;
 					board.print();
@@ -460,11 +469,9 @@ namespace Tick_Tack_Toe
 									AiPlayT3(board, Player);
 									break;
 							}
-
 							Thread.Sleep(1000);
 						}
 					}
-
 					if (CheckIfPlayerWon(board, Player))
 					{
 						board.print();
@@ -492,7 +499,6 @@ namespace Tick_Tack_Toe
 			Console.Clear();
 			Console.WriteLine("Exiting aplication...");
 			Thread.Sleep(500); // .5 seconds
-			//Console.ReadKey(); //can make it wait a second or two insted of waiting for the player input
 		}
 
 	}
