@@ -165,7 +165,6 @@ namespace Tick_Tack_Toe
 
 			return true;
 		}
-
 		static bool CheckIfPlayerWonDiagUp(Board board, int Player, int row, int col)
 		{
 			if (!board.isValid(row - d + 1, col + d - 1)) return false;
