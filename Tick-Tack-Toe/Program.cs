@@ -87,6 +87,16 @@ namespace Tick_Tack_Toe
 		{
 			return isValid(new Point(row, col));
 		}
+		//will make this a option to play with
+		//Console.WriteLine("  | 1 | 2 | 3 |");
+		//Console.WriteLine("──┼───┼───┼───┼──");
+		//Console.WriteLine("1 | X │ O │ X │");
+		//Console.WriteLine("──┼───┼───┼───┼──");
+		//Console.WriteLine("2 | X │ O │ O │");
+		//Console.WriteLine("──┼───┼───┼───┼──");
+		//Console.WriteLine("3 | O │ X │ X │");
+		//Console.WriteLine("──┼───┼───┼───┼──");
+		//Console.WriteLine("  |   |   |   |");
 		public void print()
 		{
 			for (int r = 0; r < height; r++)
@@ -408,16 +418,6 @@ namespace Tick_Tack_Toe
 		}
 		static void Main(string[] args)
 		{
-			//will make this a option to play with
-			//Console.WriteLine("  | 1 | 2 | 3 |");
-			//Console.WriteLine("──┼───┼───┼───┼──");
-			//Console.WriteLine("1 | X │ O │ X │");
-			//Console.WriteLine("──┼───┼───┼───┼──");
-			//Console.WriteLine("2 | X │ O │ O │");
-			//Console.WriteLine("──┼───┼───┼───┼──");
-			//Console.WriteLine("3 | O │ X │ X │");
-			//Console.WriteLine("──┼───┼───┼───┼──");
-			//Console.WriteLine("  |   |   |   |");
 			bool Exit = false;
 			for (;Exit == false;)
 			{
