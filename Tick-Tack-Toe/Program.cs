@@ -10,20 +10,42 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Tick_Tack_Toe
 {
+	/// <summary>
+	/// Custom console that suports colored messages ane number input
+	/// </summary>
 	public static class MyConsole {
+
+		/// <summary>
+		/// Prints message in desired color
+		/// </summary>
+		/// <param name="Message">Text of the message</param>
+		/// <param name="Color">Color of the message</param>
 		public static void Color(string Message, ConsoleColor Color)
 		{
 			Console.ForegroundColor = Color;
 			Console.WriteLine(Message);
 			Console.ResetColor();
 		}
-		public static void ColorNL(string Message, ConsoleColor Color)
+
+		/// <summary>
+		/// Prints message in desired color without starting a new line.
+		/// </summary>
+		/// <param name="Message">Text of the message</param>
+		/// <param name="Color">Color of the message</param>
+		public static void ColorSameLine(string Message, ConsoleColor Color)
 		{
 			Console.ForegroundColor = Color;
 			Console.Write(Message);
 			Console.ResetColor();
 		}
 
+		/// <summary>
+		/// Gets a integer number from the user
+		/// </summary>
+		/// <param name="min">Minimum number</param>
+		/// <param name="max">Maximum number</param>
+		/// <param name="prompt">Promt to display to the user</param>
+		/// <returns>returns a number</returns>
 		public static int getNumber(int min, int max, string prompt = "Enter a number")
 		{
 			MyConsole.Color($"{prompt} ({min}..{max})", ConsoleColor.Green);
@@ -61,14 +83,31 @@ namespace Tick_Tack_Toe
 	}
 
 
-
+	/// <summary>
+	/// Board object holding the curent state of the game
+	/// </summary>
 	public class Board
 	{
+		/// <summary>
+		/// Number of rows
+		/// </summary>
 		public int height { get; }
+
+		/// <summary>
+		/// Number of coloms
+		/// </summary>
 		public int width { get; }
+
+		/// <summary>
+		/// the individual cells of the board (0 - empty, 1 - Player one, 2 - Platyer two)
+		/// </summary>
 		public int[,] data { get; }
 
-
+		/// <summary>
+		/// creates a new board
+		/// </summary>
+		/// <param name="width">Number of coloms</param>
+		/// <param name="height">Number of rows</param>
 		public Board(int width, int height)
 		{
 			this.width = width;
@@ -76,6 +115,11 @@ namespace Tick_Tack_Toe
 			this.data = new int[height, width];
 		}
 
+		/// <summary>
+		/// Is a point within the board range
+		/// </summary>
+		/// <param name="point">Point to test</param>
+		/// <returns>True if the point is valid</returns>
 		public bool isValid(Point point)
 		{
 			return 
@@ -83,10 +127,17 @@ namespace Tick_Tack_Toe
 				0 <= point.col && point.col < width;
 		}
 
+		/// <summary>
+		/// Is a point within the board range
+		/// </summary>
+		/// <param name="row">Row</param>
+		/// <param name="col">Column</param>
+		/// <returns>True if the point is valid</returns>
 		public bool isValid(int row, int col)
 		{
 			return isValid(new Point(row, col));
 		}
+
 		//will make this a option to play with
 		//Console.WriteLine("  | 1 | 2 | 3 |");
 		//Console.WriteLine("──┼───┼───┼───┼──");
@@ -97,49 +148,75 @@ namespace Tick_Tack_Toe
 		//Console.WriteLine("3 | O │ X │ X │");
 		//Console.WriteLine("──┼───┼───┼───┼──");
 		//Console.WriteLine("  |   |   |   |");
+
+		/// <summary>
+		/// Prints the board in the console
+		/// </summary>
 		public void print()
 		{
 			for (int r = 0; r < height; r++)
 			{
 				for (int c = 0; c < width; c++)
 				{
-					MyConsole.ColorNL("|", ConsoleColor.White);
+					MyConsole.ColorSameLine("|", ConsoleColor.White);
 					if (data[r, c] == 1)
 					{
-						MyConsole.ColorNL($"{data[r, c]}", ConsoleColor.Blue);
+						MyConsole.ColorSameLine($"{data[r, c]}", ConsoleColor.Blue);
 					}
 					else if (data[r, c] == 2)
 					{
-						MyConsole.ColorNL($"{data[r, c]}", ConsoleColor.DarkYellow);
+						MyConsole.ColorSameLine($"{data[r, c]}", ConsoleColor.DarkYellow);
 					}
 					else if (data[r, c] == 0)
 					{
-						MyConsole.ColorNL($"{data[r, c]}", ConsoleColor.White);
+						MyConsole.ColorSameLine($"{data[r, c]}", ConsoleColor.White);
 					}
 				}
 				Console.WriteLine("|");
 			}
 		}
 
+		/// <summary>
+		/// Is a point on the board empty
+		/// </summary>
+		/// <param name="place">Point to test</param>
+		/// <returns>True if the point is empty</returns>
 		public bool isFree(Point place)
 		{
 			return data[place.row, place.col] == 0;
 		}
 
+		/// <summary>
+		/// Places the piece on the game board
+		/// </summary>
+		/// <param name="place">Point to place the piece at</param>
+		/// <param name="player">Player that the piece belongs to</param>
 		public void placePiece(Point place, int player)
 		{
 			data[place.row, place.col] = player + 1;
 		}
-
-		public bool isFull() { return true; }	// todo
-		
 	}
 
+	/// <summary>
+	/// Point (row and column) on the board
+	/// </summary>
 	public class Point
 	{
+		/// <summary>
+		/// zero-based row index
+		/// </summary>
 		public int row { get; }
+
+		/// <summary>
+		/// zero-based column index
+		/// </summary>
 		public int col { get; }
 
+		/// <summary>
+		///	Creates a new point
+		/// </summary>
+		/// <param name="row">zero-based row index</param>
+		/// <param name="col">zero-based column index</param>
 		public Point(int row, int col)
 		{
 			this.row = row;
@@ -147,11 +224,24 @@ namespace Tick_Tack_Toe
 		}
 	}
 
+	/// <summary>
+	/// The main program
+	/// </summary>
 	internal class Program
 	{
+		/// <summary>
+		/// Number of pieces next to each other requierd to win
+		/// </summary>
 		static int d = 3;
 
-
+		/// <summary>
+		/// Checks if a player has a winning row at a particular place on the board. 
+		/// </summary>
+		/// <param name="board">board object</param>
+		/// <param name="Player">player index (0 or 1)</param>
+		/// <param name="row">zero-based row index</param>
+		/// <param name="col">zero-based column index</param>
+		/// <returns>true if the row is winning</returns>
 		static bool CheckIfPlayerWonRow(Board board, int Player, int row, int col)
 		{
 			if (col + d > board.width) return false;
@@ -164,6 +254,14 @@ namespace Tick_Tack_Toe
 			return true;
 		}
 
+		/// <summary>
+		/// todo Checks if a player has a winning column at a particular place on the board. 
+		/// </summary>
+		/// <param name="board">board object</param>
+		/// <param name="Player">player index (0 or 1)</param>
+		/// <param name="row">zero-based row index</param>
+		/// <param name="col">zero-based column index</param>
+		/// <returns>true if the column is winning</returns>
 		static bool CheckIfPlayerWonCol(Board board, int Player, int row, int col)
 		{
 			if (row + d > board.height) return false;
@@ -175,6 +273,15 @@ namespace Tick_Tack_Toe
 
 			return true;
 		}
+
+		/// <summary>
+		/// todo Checks if a player has a winning up-right (/) diagonal at a particular place on the board. 
+		/// </summary>
+		/// <param name="board">board object</param>
+		/// <param name="Player">player index (0 or 1)</param>
+		/// <param name="row">zero-based row index</param>
+		/// <param name="col">zero-based column index</param>
+		/// <returns>true if /-diagonal is winning</returns>
 		static bool CheckIfPlayerWonDiagUp(Board board, int Player, int row, int col)
 		{
 			if (!board.isValid(row - d + 1, col + d - 1)) return false;
@@ -186,6 +293,14 @@ namespace Tick_Tack_Toe
 			return true;
 		}
 
+		/// <summary>
+		/// todo Checks if a player has a winning down-right (\) diagonal at a particular place on the board. 
+		/// </summary>
+		/// <param name="board">board object</param>
+		/// <param name="Player">player index (0 or 1)</param>
+		/// <param name="row">zero-based row index</param>
+		/// <param name="col">zero-based column index</param>
+		/// <returns>true if \-diagonal is winning</returns>
 		static bool CheckIfPlayerWonDiagDown(Board board, int Player, int row, int col)
 		{
 			if (!board.isValid(row + d - 1, col + d - 1)) return false; 
@@ -198,6 +313,12 @@ namespace Tick_Tack_Toe
 			return true;
 		}
 
+		/// <summary>
+		/// Checks if a player won. 
+		/// </summary>
+		/// <param name="board">board object</param>
+		/// <param name="Player">player index (0 or 1)</param>
+		/// <returns>true if the player won</returns>
 		static bool CheckIfPlayerWon(Board board, int Player)
 		{
 			for (int row = 0; row < board.height; row++)
@@ -218,27 +339,41 @@ namespace Tick_Tack_Toe
 			return false;
 		}
 
+		/// <summary>
+		/// Ensures that a condition is true.
+		/// </summary>
+		/// <param name="test">condition to check</param>
+		/// <param name="msg">exception message to use if the condition fails</param>
+		/// <exception cref="Exception">an exception thrown if the condition fails</exception>
 		static void check(bool test, string msg)
 		{
 			if (!test) throw new Exception(msg);
 		}
 
-		static Point input(int minx, int miny, int maxx, int maxy, 
-			String prompt="Please enter two numbers separated with a comma.",
-			ConsoleColor color = ConsoleColor.White)
+		/// <summary>
+		/// Asks the user for a point (two numbers).
+		/// </summary>
+		/// <param name="minx">minimum required for the first number (x, column)</param>
+		/// <param name="miny">minimum required for the second number (y, row)</param>
+		/// <param name="maxx">maximum required for the first number (x, column)</param>
+		/// <param name="maxy">maximum required for the second number (y, row)</param>
+		/// <param name="prompt">Prompt to display to the user</param>
+		/// <param name="color">Color to use for messages</param>
+		/// <returns></returns>
+		///todo: when a invalid input is enterd the input loses its color
+		static Point input(int minx, int miny, int maxx, int maxy, String prompt="Please enter two numbers separated with a comma.", ConsoleColor color = ConsoleColor.White)
 		{
 			MyConsole.Color(prompt, ConsoleColor.Green);
 			Console.ForegroundColor = color;
-			//I could write the player who should be playing but idk about that
 			for (; ; ) {
 				string input = "";
-				input = Console.ReadLine();//for some reason the input take 2.2 as 3.3
+				input = Console.ReadLine();
 				Console.ResetColor();
 				string[] words = input.Split(',', '.', '/');
 				int x, y;
 				try
 				{
-					check(words.Length >= 2, "At least two numbers required"); // if (words == "") {//input is for some reason 1(2)}
+					check(words.Length >= 2, "At least two numbers required");
 					check(words[0] != "" && words[1] != "", "Input must cointain something");
 					bool ValidX = Int32.TryParse(words[0], out x);
 					bool ValidY = Int32.TryParse(words[1], out y);
@@ -256,10 +391,16 @@ namespace Tick_Tack_Toe
 			}
 		}
 
+		/// <summary>
+		///  Asks a player to place a piece on the board
+		/// </summary>
+		/// <param name="board">board object</param>
+		/// <param name="Player">player index (0 or 1)</param>
+		/// <returns>A list containg two numbers showing the position the piece was placed at</returns>
 		static List<int> PlacePiece(Board board, int Player)
 		{
 			int TypeOfPlayer = Player % 2; //Type Of Player that should be playing
-			List<int> LastPlayed = new List<int>();
+			List<int> LastPlayed = new List<int>();	// todo replace with Point object
 			for (; ; )
 			{
 				Point place = input(1, 1, board.width, board.height, color: TypeOfPlayer == 0 ? ConsoleColor.Blue : ConsoleColor.DarkYellow);
@@ -273,7 +414,8 @@ namespace Tick_Tack_Toe
 					if (TypeOfPlayer == 0)
 					{
 						MyConsole.Color($"Row:{place.row + 1} Col:{place.col + 1}", ConsoleColor.Blue);
-					}else if (TypeOfPlayer == 1)
+					}
+					else if (TypeOfPlayer == 1)
 					{
 						MyConsole.Color($"Row:{place.row + 1} Col:{place.col + 1}", ConsoleColor.DarkYellow);
 					}
@@ -287,7 +429,11 @@ namespace Tick_Tack_Toe
 				}
 			}
 		}
-
+		/// <summary>
+		/// The first type of the ai's turn (random strategy)
+		/// </summary>
+		/// <param name="board">board object</param>
+		/// <param name="Player">player index (0 or 1)</param>
 		static void AiPlayT1(Board board, int Player)
 		{
 			Random rnd = new Random();
@@ -308,6 +454,13 @@ namespace Tick_Tack_Toe
 				}
 			}
 		}
+
+		/// <summary>
+		/// The second type of the ai's turn (Playing around the other player last piece)
+		/// </summary>
+		/// <param name="board">board object</param>
+		/// <param name="Player">player index (0 or 1)</param>
+		/// <param name="LastPiecePlayed">oponents last played position</param>
 		static void AiPlayT2(Board board, int Player, List<int> LastPiecePlayed)
 		{
 			int LPY = LastPiecePlayed[0] + 1;
@@ -330,12 +483,22 @@ namespace Tick_Tack_Toe
 			}
 		}
 
+		//not implemented yet
+		//this would be a new bot time (either a AI or a score system)
 		static void AiPlayT3(Board board, int Player)
 		{
-
 		}
 
-		static bool CanPlay(string[] Words,int Boardx,int Boardy,int BMax,int BMin)
+		/// <summary>
+		/// todo
+		/// </summary>
+		/// <param name="Words"></param>
+		/// <param name="Boardx"></param>
+		/// <param name="Boardy"></param>
+		/// <param name="BMax"></param>
+		/// <param name="BMin"></param>
+		/// <returns></returns>
+		static bool IsBoardSizeValid(string[] Words,int Boardx,int Boardy,int BMax,int BMin)
 		{
 			if (Words.Length >= 2)
 			{
@@ -358,15 +521,23 @@ namespace Tick_Tack_Toe
 			else MyConsole.Color("Invalid input. Please enter two values separated by a space, dot or a backslash.", ConsoleColor.Red);
 			return false;
 		}
+
+		/// <summary>
+		/// Ask Player for the size of the board they want
+		/// </summary>
+		/// <returns>size of the board</returns>
 		private static Point GetBoardSize()
 		{
+			// todo replace with input(...)
+
 			MyConsole.Color("Please enter two number for the size of the table (width, height)", ConsoleColor.Green);
-				int Boardx = 0, Boardy = 0;
-				int BMax = 50, BMin = 3;
-				string input = Console.ReadLine();
-				string PLastPlace = input;
-				string[] Words = input.Split(',', '.', '/');
-			if (CanPlay(Words, Boardx, Boardy, BMax, BMin)) // if number are 0 and then changed it think it is good but the board will not exist :/
+			int Boardx = 0, Boardy = 0;
+			int BMax = 50, BMin = 3;
+			string input = Console.ReadLine();
+			string PLastPlace = input;
+			string[] Words = input.Split(',', '.', '/');
+
+			if (IsBoardSizeValid(Words, Boardx, Boardy, BMax, BMin)) // if number are 0 and then changed it think it is good but the board will not exist :/
 			{
 				Boardx = Int32.Parse(Words[1]);
 				Boardy = Int32.Parse(Words[0]);
@@ -378,6 +549,9 @@ namespace Tick_Tack_Toe
 			}
 		}
 
+		/// <summary>
+		/// AI strategy to use
+		/// </summary>
 		enum AiType
 		{
 			None,
@@ -385,7 +559,10 @@ namespace Tick_Tack_Toe
 			Smart,
 			Local
 		}
-
+		/// <summary>
+		/// Ask player the player what about the ai strategy
+		/// </summary>
+		/// <returns>returns the ai strategy</returns>
 		private static AiType GetAiType()
 		{
 			MyConsole.Color("Do you want a ai?", ConsoleColor.Green);
@@ -405,28 +582,34 @@ namespace Tick_Tack_Toe
 			
 			return AiType.Local;
 		}
+
+		/// <summary>
+		/// Resets the game
+		/// </summary>
+		/// <param name="board">The game board</param>
+		/// <param name="MaxPlayes">How many turn must happen until a draw is delcared</param>
 		static void RestartGame(Board board, int MaxPlayes)
 		{
-			Array.Clear(board.data, 0,MaxPlayes -1);
+			//Array.Clear(board.data, 0,MaxPlayes -1); //this is usles
 			Console.Clear();
 		}
 
-		static int FitInto(int value, int min, int max)
-		{
-			int tmp = Math.Max(value, min);
-			return Math.Min(tmp, max);
-		}
+		/// <summary>
+		/// Main game loop
+		/// </summary>
+		/// <param name="args">Command line arguments</param>
 		static void Main(string[] args)
 		{
-			bool Exit = false;
-			for (;Exit == false;)
+			//a bool for if the program should end or not
+			bool Exit = false; //default
+			for (;Exit == false;) //main game loop
 			{
-				//Point boardSize = GetBoardSize();
-				Point boardSize = input(3, 3, 50, 50, 
-					"Please enter two number for the size of the board (width, height)"
-				) ;
 
+				//gets the board size
+				Point boardSize = input(3, 3, 50, 50, "Please enter two number for the size of the board (width, height)"
+				);
 
+				//sets the number of X/O you need to win
 				int maxD = Math.Max(boardSize.row, boardSize.col);
 				if (3 < maxD)
 				{
@@ -436,16 +619,19 @@ namespace Tick_Tack_Toe
 				{
 					d = 3;
 				}
+				//gets the Ai type (random, near player)
 				AiType aiType = GetAiType();
-				int MaxPlays = boardSize.col * boardSize.row - 1;
-				Board board = new Board(boardSize.col, boardSize.row);
-			List<int> LastPiecePlayed = new List<int>();
+				int MaxPlays = boardSize.col * boardSize.row - 1; //sets the number of posible turn until a draw is declared
+				Board board = new Board(boardSize.col, boardSize.row); //creates the board
+			List<int> LastPiecePlayed = new List<int>(); //the ai (near player type) can get the last piece played from the player to play.
 			Console.Clear();
+
+				//the game loop start here
 				for (int i = 0; ; i++) // inf loop
 				{
-					int Player = i % 2;
-					board.print();
-					if (aiType == AiType.None)
+					int Player = i % 2; //sets the player that should play this round
+					board.print(); //prints the curent board
+					if (aiType == AiType.None) //checks if a player or a ai should play
 					{
 						PlacePiece(board, Player);
 					}
@@ -455,7 +641,7 @@ namespace Tick_Tack_Toe
 							LastPiecePlayed = PlacePiece(board, Player);
 						}
 						else if (Player % 2 == 1) //Ai
-						{
+						{ //gets the type of the ai selected
 							switch (aiType)
 							{
 								case AiType.Random:
@@ -471,34 +657,35 @@ namespace Tick_Tack_Toe
 							Thread.Sleep(1000);
 						}
 					}
-					if (CheckIfPlayerWon(board, Player))
+					//checks if a somebody hase won.
+					if (CheckIfPlayerWon(board, Player)) //win
 					{
 						board.print();
 						MyConsole.Color($"Player{Player + 1} Won", ConsoleColor.Magenta);
 						break;
 					}
-					if (MaxPlays == i)
+					if (MaxPlays == i) //draw
 					{
 						board.print();
 						MyConsole.Color("Draw", ConsoleColor.Magenta);
 						break;
 					}
 				}
-				MyConsole.Color("Do you want to exit? (Y/N)", ConsoleColor.Green);
-				string ShouldYouExit = Console.ReadLine().ToUpper();
-				if (ShouldYouExit == "Y")
+				MyConsole.Color("Do you want to exit? (Y/N)", ConsoleColor.Green); //give a player a option to exit the program
+				string ShouldYouExit = Console.ReadLine().ToUpper(); //gets the input and put's it in a string
+				if (ShouldYouExit == "Y") //checks what the answer is
 				{
-					Exit = true;
+					Exit = true; //Exits
 				}else
 				{
-					Exit = false;
-					RestartGame(board , MaxPlays);
+					Exit = false; //continues
+					RestartGame(board , MaxPlays); //restarts the game
 				}
 			}
+			//exist the aplication
 			Console.Clear();
 			Console.WriteLine("Exiting aplication...");
-			Thread.Sleep(500); // .5 seconds
+			Thread.Sleep(500); //waits .5 seconds
 		}
-
 	}
 }
