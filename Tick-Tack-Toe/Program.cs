@@ -33,6 +33,11 @@ namespace Tick_Tack_Toe
 			Console.ResetColor();
 		}
 
+		public static void PrintPlace(Point place, ConsoleColor color)
+		{
+			MyConsole.Color($"Row: {place.Row + 1} Col:{place.Col + 1}", color);
+		}
+
 		/// <summary>
 		/// Gets a integer number from the user
 		/// </summary>
@@ -93,7 +98,7 @@ namespace Tick_Tack_Toe
 		public int Width { get; }
 
 		/// <summary>
-		/// the individual cells of the board (0 - empty, 1 - player one, 2 - Platyer two)
+		/// the individual cells of the board (0 - empty, 1 - player one, 2 - player two)
 		/// </summary>
 		public int[,] Data { get; }
 
@@ -249,7 +254,7 @@ namespace Tick_Tack_Toe
 		}
 
 		/// <summary>
-		/// todo Checks if a player has a winning column at a particular place on the board. 
+		/// Checks if a player has a winning column at a particular place on the board. 
 		/// </summary>
 		/// <param name="board">board object</param>
 		/// <param name="player">player index (0 or 1)</param>
@@ -269,7 +274,7 @@ namespace Tick_Tack_Toe
 		}
 
 		/// <summary>
-		/// todo Checks if a player has a winning up-right (/) diagonal at a particular place on the board. 
+		/// Checks if a player has a winning up-right (/) diagonal at a particular place on the board. 
 		/// </summary>
 		/// <param name="board">board object</param>
 		/// <param name="player">player index (0 or 1)</param>
@@ -288,7 +293,7 @@ namespace Tick_Tack_Toe
 		}
 
 		/// <summary>
-		/// todo Checks if a player has a winning down-right (\) diagonal at a particular place on the board. 
+		/// Checks if a player has a winning down-right (\) diagonal at a particular place on the board. 
 		/// </summary>
 		/// <param name="board">board object</param>
 		/// <param name="player">player index (0 or 1)</param>
@@ -368,11 +373,11 @@ namespace Tick_Tack_Toe
 				try
 				{
 					check(words.Length >= 2, "At least two numbers required");
-					check(words[0] != "" && words[1] != "", "Input must cointain something");
+					check(words[0] != "" && words[1] != "", "The input must contain something");
 					bool validX = Int32.TryParse(words[0], out x);
 					bool validY = Int32.TryParse(words[1], out y);
-					check(validX, "First item is not a number");
-					check(validX, "Second item is not a number");
+					check(validX, "The first item is not a number");
+					check(validX, "The second item is not a number");
 					check(minx <= x && x <= maxx, $"The first number must be in [{minx}, {maxx}]");
 					check(miny <= y && y <= maxy, $"The second number must be in [{miny}, {maxy}]");
 				
@@ -391,31 +396,28 @@ namespace Tick_Tack_Toe
 		/// <param name="board">board object</param>
 		/// <param name="player">player index (0 or 1)</param>
 		/// <returns>A list containg two numbers showing the position the piece was placed at</returns>
-		static List<int> PlacePiece(Board board, int player)
+		static Point PlacePiece(Board board, int player)
 		{
 			int typeOfPlayer = player % 2; //Type Of player that should be playing
-			List<int> lastPlayed = new List<int>();	// todo replace with point object
+			
 			for (; ; )
 			{
 				Point place = Input(1, 1, board.Width, board.Height, color: typeOfPlayer == 0 ? ConsoleColor.Blue : ConsoleColor.DarkYellow);
 				place = new Point(row: place.Row - 1, col: place.Col - 1);
 
-				lastPlayed.Add(place.Row);
-				lastPlayed.Add(place.Col);
-
 				if (board.IsFree(place))
 				{
 					if (typeOfPlayer == 0)
 					{
-						MyConsole.Color($"row:{place.Row + 1} col:{place.Col + 1}", ConsoleColor.Blue);
+						MyConsole.PrintPlace(place, ConsoleColor.Blue);
 					}
 					else if (typeOfPlayer == 1)
 					{
-						MyConsole.Color($"row:{place.Row + 1} col:{place.Col + 1}", ConsoleColor.DarkYellow);
+						MyConsole.PrintPlace(place, ConsoleColor.DarkYellow);
 					}
 					
 					board.PlacePiece(place, player);
-					return lastPlayed;
+					return place;
 				}
 				else
 				{
@@ -431,20 +433,17 @@ namespace Tick_Tack_Toe
 		static void AiPlayRandom(Board board, int player)
 		{
 			Random rnd = new Random();
-			for (; ; )
+			for (;;)
 			{
-				int aiOptionY = rnd.Next(0, board.Height);
-				int aiOptionX = rnd.Next(0, board.Width);
+				int aiOptionRow = rnd.Next(0, board.Height);
+				int aiOptionCol = rnd.Next(0, board.Width);
+				Point place = new Point(aiOptionRow, aiOptionCol);
 
-				if (board.Data[aiOptionX, aiOptionY] == 0)
+				if (board.IsFree(place))
 				{
-					MyConsole.Color($"row:{aiOptionX + 1} col:{aiOptionY + 1}", ConsoleColor.DarkYellow);
-					board.Data[aiOptionX, aiOptionY] = player + 1;
+					board.PlacePiece(place, player);
+					MyConsole.PrintPlace(place, ConsoleColor.DarkYellow);
 					return;
-				}
-				else
-				{
-					MyConsole.Color("Ai failed. place already taken", ConsoleColor.Red);
 				}
 			}
 		}
@@ -454,25 +453,22 @@ namespace Tick_Tack_Toe
 		/// </summary>
 		/// <param name="board">board object</param>
 		/// <param name="player">player index (0 or 1)</param>
-		/// <param name="lastPiecePlayed">oponents last played position</param>
-		static void AiPlayLocal(Board board, int player, List<int> lastPiecePlayed)
+		/// <param name="lastPiecePlayed">opponents last played position</param>
+		static void AiPlayLocal(Board board, int player, Point lastPiecePlayed)
 		{
-			int lpy = lastPiecePlayed[0] + 1;
-			int plx = lastPiecePlayed[1] + 1;
 			Random rnd = new Random();
 			for (; ; )
 			{
 				int variance = rnd.Next(0, 3);
-				int aiOptionY = rnd.Next(lpy - variance, lpy + variance);
-				int aiOptionX = rnd.Next(plx - variance, plx + variance);
-				if (0 <= aiOptionY && aiOptionY < board.Height && 0 <= aiOptionX && aiOptionX < board.Width)
+				int aiOptionCol = rnd.Next(lastPiecePlayed.Col - variance, lastPiecePlayed.Col + variance);
+				int aiOptionRow = rnd.Next(lastPiecePlayed.Row - variance, lastPiecePlayed.Row + variance);
+				Point place = new Point(aiOptionRow, aiOptionCol);
+
+				if (board.IsValid(place) && board.IsFree(place))
 				{
-					if (board.Data[aiOptionY, aiOptionX] == 0)
-					{
-						board.Data[aiOptionY, aiOptionX] = 2;
-						MyConsole.Color($"row:{aiOptionY + 1} col:{aiOptionX + 1}", ConsoleColor.DarkYellow);
-						break;
-					}
+					board.PlacePiece(place, player);
+					MyConsole.PrintPlace(place, ConsoleColor.DarkYellow);
+					return;
 				}
 			}
 		}
@@ -556,14 +552,14 @@ namespace Tick_Tack_Toe
 				AiType aiType = GetAiType();
 				int maxPlays = boardSize.Col * boardSize.Row - 1; //sets the number of posible turn until a draw is declared
 				Board board = new Board(boardSize.Col, boardSize.Row); //creates the board
-				List<int> lastPiecePlayed = new List<int>(); //the ai (near player type) can get the last piece played from the player to play.
+				Point lastPiecePlayed = null; // so that AI know what player played in the previous turn
 				Console.Clear();
 
-				//the game loop start here
+				// the game loop start here
 				for (int i = 0; ; i++) // inf loop
 				{
-					int player = i % 2; //sets the player that should play this round
-					board.Print(); //prints the curent board
+					int player = i % 2; // sets the player that should play this round
+					board.Print(); // prints the curent board
 					if (aiType == AiType.None) //checks if a player or a ai should play
 					{
 						PlacePiece(board, player);
