@@ -1,7 +1,0 @@
-Ai ideas:
-get the lest played point and play around it //can hardly win only with luck
-pick 1 spot and play around the spot //dosent block
-random //winning chance is low
-
-should change:
-make the error message consistante(in some cases the error choses for you and other it lets you pick again)

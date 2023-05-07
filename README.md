@@ -1,67 +1,61 @@
 # Tic-tac-toe
-## by Matyas Hana
 
-### The goal of the Project:
+[tic-tac-toe](https://en.wikipedia.org/wiki/Tic-tac-toe) game - a school project by Matyas Hana
 
-- Make a  working version of Tic-tac-toe.
-- Make the board scalable to any size.
-- Make a simple ai to play against you.
+## The goal of the Project:
 
-### Selected technologies, expected difficulty
+- Make a working version of Tic-tac-toe.
+- Make the board scalable to any reasonable size.
+- Make a simple AI to play against you.
 
-- The c# language.
-- The project will be made in visual studio with the .net console.
-- It will take about 5-10h.
+## Links
 
+- Asigment: https://github.com/jVsetecka/PVA_1
+- Project: https://github.com/matty147/Tic_tac_toe
+- Itch.io: https://inkk-ing.itch.io/tick-tack-toe-in-the-console
 
-# zz
+# User Documentation
 
-Tic-tac-toe
+This is a school project I am working on.
 
+This game is an extension of a regular [tic-tac-toe game](https://en.wikipedia.org/wiki/Tic-tac-toe): 
 
-Todo:
-Make documentacion (about 1000 words)
-presentacion
+- the user can choose the size of the board from a compact 3x3 to a sprawling 50x50 and 
+- how many pieces next to each other are needed for a win. 
 
-Asigment: https://github.com/jVsetecka/PVA_1
-Project: https://github.com/matty147/Tic_tac_toe
-Itch.io: https://inkk-ing.itch.io/tick-tack-toe-in-the-console
-
-# User Instruction
-
-This is a school project I am still working on.
-
-In this game, you'll be able to choose the size of the board, from a compact 3x3 to a sprawling 50x50. The game's objective is to get 3 in a row.
-
-To play, input the x and y coordinates of the space you wish to occupy, and aim to outmaneuver your opponent. With the ability to choose the winning condition, you can make the game as challenging or straightforward as you like. Have fun!
+To play, input the x and y coordinates of the space you wish to occupy, and aim to outmaneuver your opponent. 
+With the ability to choose the winning condition, you can make the game as challenging or straightforward as you like. 
+Have fun!
 
 ## Install Instructions
 
+The game requires [.Net runtime 4.7.1 or newer](https://dotnet.microsoft.com/en-us/download/dotnet-framework).
+
+* Go to Itch.io: https://inkk-ing.itch.io/tick-tack-toe-in-the-console
 * Download the .zip file containing Tick-Tack-Toe to your computer.
-* Right-click on the .zip file and select "Extract All" or a similar option to extract the file's contents.
-* Once the extraction is complete, navigate to the folder where the files were extracted.
+* Extract the content of the archive.
+* Navigate to the folder where the files were extracted.
 * Find the "Tick-Tack-Toe.exe" file and double-click on it to run the game.
 * Enjoy playing Tick-Tack-Toe on your computer!
 * If you encounter any issues during the installation process, please let me know and I'll be happy to assist.
 
-# Program Design
+## Sample game
+For any user input, the case is not important. :thumbsup:
 
-# sample game
-(the game is not case sensitive) :thumbsup:
 **Please enter two number for the size of the board (width, height)**
-> Here i select what board size i want to play on. 
+> Select what board size you want to play on (minimu is 3x3, maximum 50x50). 
  `5.5`
 
 **Please enter how many X's next to each other are needed to win (3..5)**
-> Here i will select how many X i need next to each other to win. 
+> Select how many playing pieces I need next to each other to win. 
  `3`
 
 **Do you want an AI to play against you?**
-> Here you can select if a Bot should play against you or not
+> Select if a Bot should play against you or not.
  `y`
 
 **Please enter the type of the AI (1/2/3)**
-> Here you can select the type of the bot by entering a number from 1 to 2. 
+> Select the type of the bot by entering 1 or 2 (3 is not supported yet and is treated as 2). 
  `2`
 
 ```
@@ -92,7 +86,7 @@ Row: 3 Col:4
 |0|0|0|0|0|
 |0|0|0|0|0|
 ```
-> After that continue the steps fromt before until somebody wins
+> After that continue the steps from before until somebody wins
 ```
 Row: 4 Col:4
 |0|0|0|0|0|
@@ -106,16 +100,37 @@ Row: 4 Col:4
 
 **Do you want to exit? (Y/N)**
 > Here you can exit the program by answering Yes or No
-- case `n`
-> the program restarts and you can play again
-- case: `y`
-**Exiting the aplication...**
-> the program exits
 
-# Program Blocks
+When user enters `n`, the program restarts and you can play again. 
+When user enters `y`, the program exits.
 
-grep -P "private|public|static|class|///" Program.cs | grep -vP "///.*(summary|param name|returns|exception)" > doc.txt
+# Programmer's Documentation
 
+## Used technologies
+
+- The C# programming language
+- The .Net 4.7.2 framework
+
+## Build from sources
+
+- Make sure you have: 
+  - git
+  - MS Visual Studio 10 or newer, 
+  - .Net 4.7.2 or newer.
+- Clone the source from github: `git clone https://github.com/matty147/Tic_tac_toe.git`
+- Use MS Visual Studio to build the solution.
+
+
+## Program Design
+
+The two main parts of the application are:
+
+- `Board` object - handles all actions related to the board (placing pieces, checking if anybody won, etc)
+- `Program` object - handles communication with the user and game turns. Uses the `Board` object.
+
+See next section for more detail.
+
+## Program Blocks
 
 `class MyConsole` - Custom console that suports colored messages ane number Input
 
@@ -161,3 +176,7 @@ grep -P "private|public|static|class|///" Program.cs | grep -vP "///.*(summary|p
 - `static void Main(string[] args)` - Main game loop
 
 
+## Possible extensions
+
+- Implement more advanced AI strategy
+- Implement as a Web game
