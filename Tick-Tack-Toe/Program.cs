@@ -137,16 +137,16 @@ namespace Tick_Tack_Toe
 			return IsValid(new Point(row, col));
 		}
 
-		//will make this a option to play with
-		//Console.WriteLine("  | 1 | 2 | 3 |");
-		//Console.WriteLine("──┼───┼───┼───┼──");
-		//Console.WriteLine("1 | X │ O │ X │");
-		//Console.WriteLine("──┼───┼───┼───┼──");
-		//Console.WriteLine("2 | X │ O │ O │");
-		//Console.WriteLine("──┼───┼───┼───┼──");
-		//Console.WriteLine("3 | O │ X │ X │");
-		//Console.WriteLine("──┼───┼───┼───┼──");
-		//Console.WriteLine("  |   |   |   |");
+		// make this a option to play with
+		// Console.WriteLine("  | 1 | 2 | 3 |");
+		// Console.WriteLine("──┼───┼───┼───┼──");
+		// Console.WriteLine("1 | X │ O │ X │");
+		// Console.WriteLine("──┼───┼───┼───┼──");
+		// Console.WriteLine("2 | X │ O │ O │");
+		// Console.WriteLine("──┼───┼───┼───┼──");
+		// Console.WriteLine("3 | O │ X │ X │");
+		// Console.WriteLine("──┼───┼───┼───┼──");
+		// Console.WriteLine("  |   |   |   |");
 
 		/// <summary>
 		/// Prints the board in the console
@@ -194,6 +194,111 @@ namespace Tick_Tack_Toe
 		{
 			Data[place.Row, place.Col] = player + 1;
 		}
+
+		/// <summary>
+		/// Checks if a player has a winning row at a particular place on the board. 
+		/// </summary>
+		/// <param name="player">player index (0 or 1)</param>
+		/// <param name="piecesToWin">the number of X/O pieces next to each other requierd to win</param>
+		/// <param name="row">zero-based row index</param>
+		/// <param name="col">zero-based column index</param>
+		/// <returns>true if the row is winning</returns>
+		private bool CheckIfPlayerWonRow(int player, int piecesToWin, int row, int col)
+		{
+			if (col + piecesToWin > Width) return false;
+
+			for (int i = 0; i < piecesToWin; i++)
+			{
+				if (Data[row, col + i] != player + 1) return false;
+			}
+
+			return true;
+		}
+
+		/// <summary>
+		/// Checks if a player has a winning column at a particular place on the board. 
+		/// </summary>
+		/// <param name="player">player index (0 or 1)</param>
+		/// <param name="piecesToWin">the number of X/O pieces next to each other requierd to win</param>
+		/// <param name="row">zero-based row index</param>
+		/// <param name="col">zero-based column index</param>
+		/// <returns>true if the column is winning</returns>
+		private bool CheckIfPlayerWonCol(int player, int piecesToWin, int row, int col)
+		{
+			if (row + piecesToWin > Height) return false;
+
+			for (int i = 0; i < piecesToWin; i++)
+			{
+				if (Data[row + i, col] != player + 1) return false;
+			}
+
+			return true;
+		}
+
+		/// <summary>
+		/// Checks if a player has a winning up-right (/) diagonal at a particular place on the board. 
+		/// </summary>
+		/// <param name="player">player index (0 or 1)</param>
+		/// <param name="piecesToWin">the number of X/O pieces next to each other requierd to win</param>
+		/// <param name="row">zero-based row index</param>
+		/// <param name="col">zero-based column index</param>
+		/// <returns>true if /-diagonal is winning</returns>
+		private bool CheckIfPlayerWonDiagUp(int player, int piecesToWin, int row, int col)
+		{
+			if (!IsValid(row - piecesToWin + 1, col + piecesToWin - 1)) return false;
+
+			for (int i = 0; i < piecesToWin; i++)
+			{
+				if (Data[row - i, col + i] != player + 1) return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Checks if a player has a winning down-right (\) diagonal at a particular place on the board. 
+		/// </summary>
+		/// <param name="player">player index (0 or 1)</param>
+		/// <param name="piecesToWin">the number of X/O pieces next to each other requierd to win</param>
+		/// <param name="row">zero-based row index</param>
+		/// <param name="col">zero-based column index</param>
+		/// <returns>true if \-diagonal is winning</returns>
+		private bool CheckIfPlayerWonDiagDown(int player, int piecesToWin, int row, int col)
+		{
+			if (!IsValid(row + piecesToWin - 1, col + piecesToWin - 1)) return false;
+
+			for (int i = 0; i < piecesToWin; i++)
+			{
+				if (Data[row + i, col + i] != player + 1) return false;
+			}
+
+			return true;
+		}
+
+		/// <summary>
+		/// Checks if a player won. 
+		/// </summary>
+		/// <param name="player">player index (0 or 1)</param>
+		/// <param name="piecesToWin">the number of X/O pieces next to each other requierd to win</param>
+		/// <returns>true if the player won</returns>
+		public bool CheckIfPlayerWon(int player, int piecesToWin)
+		{
+			for (int row = 0; row < Height; row++)
+			{
+				for (int col = 0; col < Width; col++)
+				{
+					if (
+						CheckIfPlayerWonRow(player, piecesToWin, row, col) ||
+						CheckIfPlayerWonCol(player, piecesToWin, row, col) ||
+						CheckIfPlayerWonDiagUp(player, piecesToWin, row, col) ||
+						CheckIfPlayerWonDiagDown(player, piecesToWin, row, col)
+					)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
 	}
 
 	/// <summary>
@@ -228,116 +333,6 @@ namespace Tick_Tack_Toe
 	/// </summary>
 	internal class Program
 	{
-		/// <summary>
-		/// number of pieces next to each other requierd to win
-		/// </summary>
-		static int PiecesToWin = 3;
-
-		/// <summary>
-		/// Checks if a player has a winning row at a particular place on the board. 
-		/// </summary>
-		/// <param name="board">board object</param>
-		/// <param name="player">player index (0 or 1)</param>
-		/// <param name="row">zero-based row index</param>
-		/// <param name="col">zero-based column index</param>
-		/// <returns>true if the row is winning</returns>
-		private static bool CheckIfPlayerWonRow(Board board, int player, int row, int col)
-		{
-			if (col + PiecesToWin > board.Width) return false;
-
-			for (int i = 0; i < PiecesToWin; i++)
-			{
-				if (board.Data[row, col + i] != player + 1) return false;
-			}
-
-			return true;
-		}
-
-		/// <summary>
-		/// Checks if a player has a winning column at a particular place on the board. 
-		/// </summary>
-		/// <param name="board">board object</param>
-		/// <param name="player">player index (0 or 1)</param>
-		/// <param name="row">zero-based row index</param>
-		/// <param name="col">zero-based column index</param>
-		/// <returns>true if the column is winning</returns>
-		private static bool CheckIfPlayerWonCol(Board board, int player, int row, int col)
-		{
-			if (row + PiecesToWin > board.Height) return false;
-
-			for (int i = 0; i < PiecesToWin; i++)
-			{
-				if (board.Data[row + i, col] != player + 1) return false;
-			}
-
-			return true;
-		}
-
-		/// <summary>
-		/// Checks if a player has a winning up-right (/) diagonal at a particular place on the board. 
-		/// </summary>
-		/// <param name="board">board object</param>
-		/// <param name="player">player index (0 or 1)</param>
-		/// <param name="row">zero-based row index</param>
-		/// <param name="col">zero-based column index</param>
-		/// <returns>true if /-diagonal is winning</returns>
-		private static bool CheckIfPlayerWonDiagUp(Board board, int player, int row, int col)
-		{
-			if (!board.IsValid(row - PiecesToWin + 1, col + PiecesToWin - 1)) return false;
- 
-			for (int i = 0; i < PiecesToWin; i++)
-			{
-				if (board.Data[row - i, col + i] != player + 1) return false;
-			}
-			return true;
-		}
-
-		/// <summary>
-		/// Checks if a player has a winning down-right (\) diagonal at a particular place on the board. 
-		/// </summary>
-		/// <param name="board">board object</param>
-		/// <param name="player">player index (0 or 1)</param>
-		/// <param name="row">zero-based row index</param>
-		/// <param name="col">zero-based column index</param>
-		/// <returns>true if \-diagonal is winning</returns>
-		private static bool CheckIfPlayerWonDiagDown(Board board, int player, int row, int col)
-		{
-			if (!board.IsValid(row + PiecesToWin - 1, col + PiecesToWin - 1)) return false; 
-
-			for (int i = 0; i < PiecesToWin; i++)
-			{
-			if (board.Data[row + i, col + i] != player + 1) return false; 
-			}
-
-			return true;
-		}
-
-		/// <summary>
-		/// Checks if a player won. 
-		/// </summary>
-		/// <param name="board">board object</param>
-		/// <param name="player">player index (0 or 1)</param>
-		/// <returns>true if the player won</returns>
-		static bool CheckIfPlayerWon(Board board, int player)
-		{
-			for (int row = 0; row < board.Height; row++)
-			{
-				for (int col = 0; col < board.Width; col++)
-				{
-					if (
-						CheckIfPlayerWonRow(board, player, row, col) ||
-						CheckIfPlayerWonCol(board, player, row, col) ||
-						CheckIfPlayerWonDiagUp(board, player, row, col) ||
-						CheckIfPlayerWonDiagDown(board, player, row, col)
-					)
-					{
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-
 		/// <summary>
 		/// Ensures that a condition is true.
 		/// </summary>
@@ -473,7 +468,7 @@ namespace Tick_Tack_Toe
 			}
 		}
 
-		//this would be a new bot time (either a AI or a score system)
+		// this would be a new bot time (either a AI or a score system)
 		static void AiPlaySmart(Board board, int player)
 		{
 			//not implemented yet
@@ -530,28 +525,26 @@ namespace Tick_Tack_Toe
 		/// <param name="args">Command line arguments</param>
 		static void Main(string[] args)
 		{
-			//a bool for if the program should end or not
-			bool exit = false; //default
-			for (;exit == false;) //main game loop
+			// a bool if the program should end or not
+			bool exit = false; // default
+			for (;exit == false;) // main game loop
 			{
 
-				//gets the board size
+				// gets the board size
 				Point boardSize = Input(3, 3, 50, 50, "Please enter two number for the size of the board (width, height)");
 
-				//sets the number of X/O you need to win
+				// sets the number of X/O next to each other requierd to win
+				int piecesToWin = 3;          
 				int maxPiecesToWin = Math.Max(boardSize.Row, boardSize.Col);
 				if (3 < maxPiecesToWin)
 				{
-					PiecesToWin = MyConsole.GetNumber(3, maxPiecesToWin, "Please enter how many X's next to each other are needed to win");
+					piecesToWin = MyConsole.GetNumber(3, maxPiecesToWin, "Please enter how many X's next to each other are needed to win");
 				}
-				else
-				{
-					PiecesToWin = 3;
-				}
-				//gets the Ai type (random, near player)
+
+				// gets the Ai type (random, near player)
 				AiType aiType = GetAiType();
-				int maxPlays = boardSize.Col * boardSize.Row - 1; //sets the number of posible turn until a draw is declared
-				Board board = new Board(boardSize.Col, boardSize.Row); //creates the board
+				int maxPlays = boardSize.Col * boardSize.Row - 1; // sets the number of posible turn until a draw is declared
+				Board board = new Board(boardSize.Col, boardSize.Row); // creates the board
 				Point lastPiecePlayed = null; // so that AI know what player played in the previous turn
 				Console.Clear();
 
@@ -560,7 +553,7 @@ namespace Tick_Tack_Toe
 				{
 					int player = i % 2; // sets the player that should play this round
 					board.Print(); // prints the curent board
-					if (aiType == AiType.None) //checks if a player or a ai should play
+					if (aiType == AiType.None) // checks if a player or a ai should play
 					{
 						PlacePiece(board, player);
 					}
@@ -570,7 +563,7 @@ namespace Tick_Tack_Toe
 							lastPiecePlayed = PlacePiece(board, player);
 						}
 						else if (player % 2 == 1) // Ai playing
-						{ //gets the type of the ai selected
+						{ // gets the type of the ai selected
 							Thread.Sleep(1000); // so the program seems to think about the playing
 							switch (aiType)
 							{
@@ -586,14 +579,14 @@ namespace Tick_Tack_Toe
 							}
 						}
 					}
-					//checks if the current player won.
-					if (CheckIfPlayerWon(board, player)) //win
+					// checks if the current player won.
+					if (board.CheckIfPlayerWon(player, piecesToWin)) // win
 					{
 						board.Print();
 						MyConsole.Color($"player{player + 1} Won", ConsoleColor.Magenta);
 						break;
 					}
-					if (maxPlays == i) //draw
+					if (maxPlays == i) // draw
 					{
 						board.Print();
 						MyConsole.Color("Draw", ConsoleColor.Magenta);
@@ -616,7 +609,7 @@ namespace Tick_Tack_Toe
 			// exit the aplication
 			Console.Clear();
 			Console.WriteLine("Exiting application...");
-			Thread.Sleep(500); //waits .5 seconds
+			Thread.Sleep(500); // waits .5 seconds
 		}
 	}
 }
