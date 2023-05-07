@@ -486,7 +486,7 @@ namespace Tick_Tack_Toe
 			Local
 		}
 		/// <summary>
-		/// Ask player the player what about the ai strategy
+		/// Ask the player which AI strategy to use, if any.
 		/// </summary>
 		/// <returns>returns the ai strategy</returns>
 		private static AiType GetAiType()
@@ -526,12 +526,12 @@ namespace Tick_Tack_Toe
 		static void Main(string[] args)
 		{
 			// a bool if the program should end or not
-			bool exit = false; // default
+			bool exit = false; // default	
 			for (;exit == false;) // main game loop
 			{
 
 				// gets the board size
-				Point boardSize = Input(3, 3, 50, 50, "Please enter two number for the size of the board (width, height)");
+				Point boardSize = Input(3, 3, 50, 50, "Please enter two numbers for the size of the board (width, height)");
 
 				// sets the number of X/O next to each other requierd to win
 				int piecesToWin = 3;          
