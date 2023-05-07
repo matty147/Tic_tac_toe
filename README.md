@@ -18,7 +18,7 @@
 
 This is a school project I am working on.
 
-This game is an extension of a regular [tic-tac-toe game](https://en.wikipedia.org/wiki/Tic-tac-toe game. The user can choose: 
+This game is an extension of a regular [tic-tac-toe](https://en.wikipedia.org/wiki/Tic-tac-toe) game. The user can choose: 
 
 - the size of the board from a compact 3x3 to a sprawling 50x50 and
 - how many pieces next to each other are needed for a win
